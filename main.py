@@ -4,7 +4,16 @@
 
 @authors: 
 """
+#Modules
 import numpy as np
+from sympy import symbols,diff,exp,sin,pi,Function
+import math
+import matplotlib.pyplot as plt
+import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
+
+#Fonctions
+
 
 
 #Constantes
@@ -69,6 +78,25 @@ if const != True:
         
         
 #a faire les erreurs
+
+#fonction analytique j'arrive pas a utiliser sympy pour le moment
+
+#r = symbols('r')
+#C = Function('C')(r)
+
+def c(r):
+    return 0.25*S/Deff*0.5**2*((r*2)**2-1) + Ce
+ 
+
+def graphique(Result,analytique):
+    X = [i for i in range(len(Result))]
+    Y = [analytique(i) for i in X]
+    plt.plot(X, Y)
+    plt.show()
+    return 
+
+graphique(Results,c)
+
 
 
         
