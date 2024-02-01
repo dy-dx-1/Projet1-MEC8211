@@ -5,21 +5,28 @@ Created on Thu Feb  1 11:50:58 2024
 @author: alsip
 """
 
-#Constantes
-Deff = 10e-10
-L = 0.5
-Ce = 12
 
-
-Ntt = 5
-dx=L/Ntt
-unsurdx=1/dx
-
-#Si S n'est pas constant decomentez les lignes suivantes
-S = 8*10e-9
-k = 4*10e-9
-const = True
-
-#Valeur pour la boucle temporelle
-dt=1e-5 #pas précisé
-itermax=10000
+class Data():
+    def __init__(self,Ntt=5):
+        #variables modifiable de l'utilisateur (transfere sur main may be ?)
+        self.Ntt = Ntt
+        self.const = True
+        
+        #Constantes
+        self.Deff = 10e-10
+        self.L = 0.5
+        self.Ce = 12
+        
+        
+        
+        self.dx=self.L/self.Ntt
+        self.unsurdx=1/self.dx
+        
+        #Si S n'est pas constant decomentez les lignes suivantes
+        self.S = 8*10e-9
+        self.k = 4*10e-9
+        self.const = True
+        
+        #Valeur pour la boucle temporelle
+        self.dt=1e-5 #pas précisé
+        self.itermax=10000

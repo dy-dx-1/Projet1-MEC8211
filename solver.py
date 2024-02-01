@@ -13,21 +13,21 @@ from mpl_toolkits.mplot3d import Axes3D
 import math
 
 #fonctions
-from data import *
 
-def solver():
+
+def solver(data):
     #Pour les tracer
     Results=[]
     #pour les boucles
     t=0
     #Constante de la matrice
-    alpha = 1 +3*Deff*unsurdx**2*dt
-    beta = -2*Deff*unsurdx**2*dt
-    delta = -1*Deff*unsurdx**2*dt
+    alpha = 1 +3*data.Deff*data.unsurdx**2*data.dt
+    beta = -2*data.Deff*data.unsurdx**2*data.dt
+    delta = -1*data.Deff*data.unsurdx**2*data.dt
     
     #Initialisation
     gamma0=np.zeros((5,1))
-    gamma0[4][0]=Ce
+    gamma0[4][0]=data.Ce
     Results.append(gamma0)
     
     unit=np.ones((5,1))
@@ -47,16 +47,16 @@ def solver():
     invA=np.linalg.inv(A)
     
     #Cas constante
-    if const == True:
-        while t<itermax:
+    if data.const == True:
+        while t<data.itermax:
             t+=1
-            gamma0=np.dot(invA,gamma0)-S*dt*np.dot(invA,unit)
+            gamma0=np.dot(invA,gamma0)-data.S*data.dt*np.dot(invA,unit)
             Results.append(gamma0)
     
     #Cas non constante
-    if const != True:
-        invA=np.linalg.inv(A-k*dt*np.eye(5))
-        while t<itermax:
+    if data.const != True:
+        invA=np.linalg.inv(A-data.k*data.dt*np.eye(5))
+        while t<data.itermax:
             gamma0=np.dot(invA,gamma0)
             Results.append(gamma0)
         

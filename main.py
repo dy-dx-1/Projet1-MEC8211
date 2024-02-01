@@ -21,20 +21,14 @@ from data import *
 from graphique import *
 from solver import *
 
+data=Data(5)
 
-Results=solver()
-tableau_ana=graphique(Results)
-    
-#a faire les erreurs
+Results=solver(data)
+tableau_ana=graphique(data,Results)
 
-#fonction analytique j'arrive pas a utiliser sympy pour le moment
-
-#r = symbols('r')
-#C = Function('C')(r)
-
-erreurL1=erreurL1(Ntt,Results,tableau_ana)
-erreurL2=erreurL2(Ntt,Results,tableau_ana)
-erreurLinf=erreurLinf(Ntt,Results,tableau_ana)
+erreurL1=erreurL1(data,data.Ntt,Results,tableau_ana)
+erreurL2=erreurL2(data,data.Ntt,Results,tableau_ana)
+erreurLinf=erreurLinf(data,data.Ntt,Results,tableau_ana)
 
 
 

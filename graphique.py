@@ -13,13 +13,13 @@ from mpl_toolkits.mplot3d import Axes3D
 import math
 
 
-from data import *
+
 from analytique import *
 
-def graphique(Results):
+def graphique(data,Results):
     plt.figure(1)
-    X = [i for i in range(Ntt)]
-    Y = [analytique(i) for i in X]
+    X = [i for i in range(data.Ntt)]
+    Y = [analytique(data,i) for i in X]
     plt.plot(X, Y)
     
     
@@ -27,6 +27,6 @@ def graphique(Results):
     plt.grid(True)
     plt.xlabel('Noeuds')
     plt.ylabel('Concentration')
-    plt.title('V2 Evolution de la concentration de sel dans le pillier (1D)')
+    plt.title('V3 Evolution de la concentration de sel dans le pillier (1D)')
     plt.show()
     return Y
