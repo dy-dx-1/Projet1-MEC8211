@@ -26,7 +26,7 @@ data_instance=Data(5)
 tab_erreur=[[],[],[]]
 tab_dx=[]
 
-for n in range (1,10):
+for n in range (1,5):
     data_instance.Ntt=5*n
     tab_dx.append(data_instance.dx)
 

@@ -20,7 +20,7 @@ class Data():
         
         
         
-        self.dx=self.L/self.Ntt
+        self.dx=self.L/(self.Ntt-1)
         self.unsurdx=1/self.dx
         
         #Si S n'est pas constant decomentez les lignes suivantes
@@ -29,7 +29,7 @@ class Data():
         self.const = True
         
         #Valeur pour la boucle temporelle
-        self.dt=1e-5 #pas précisé
+        self.dt=0.1 #pas précisé
         self.itermax=1000
         
     @property
@@ -42,5 +42,5 @@ class Data():
     
     def update_dx(self):
         # Mise à jour de dx en fonction de la nouvelle valeur de Ntt
-        self.dx = self.L / self.Ntt
+        self.dx = self.L / (self.Ntt-1)
         self.unsurdx = 1 / self.dx
