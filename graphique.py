@@ -16,10 +16,10 @@ import math
 
 from analytique import *
 
-def graphique(data,Results):
+def graphique(data_instance,Results):
     plt.figure(1)
-    X = [i for i in range(data.Ntt)]
-    Y = [analytique(data,i) for i in X]
+    X = [i for i in range(data_instance.Ntt)]
+    Y = [analytique(data_instance,i) for i in X]
     plt.plot(X, Y)
     
     
@@ -27,6 +27,6 @@ def graphique(data,Results):
     plt.grid(True)
     plt.xlabel('Noeuds')
     plt.ylabel('Concentration')
-    plt.title('V3 Evolution de la concentration de sel dans le pillier (1D)')
+    plt.title('V3 Evolution de la concentration de sel dans le pillier - {}'.format(data_instance.Ntt))
     plt.show()
     return Y

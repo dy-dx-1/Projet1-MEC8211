@@ -15,31 +15,31 @@ import math
 #fonctions
 
 
-def solver(data):
+def solver(data_instance):
     #Pour les tracer
     Results=[]
     #pour les boucles
     t=0
     #Constante de la matrice
-    alpha = 1 +3*data.Deff*data.unsurdx**2*data.dt
-    beta = -2*data.Deff*data.unsurdx**2*data.dt
-    delta = -1*data.Deff*data.unsurdx**2*data.dt
+    alpha = 1 +3*data_instance.Deff*data_instance.unsurdx**2*data_instance.dt
+    beta = -2*data_instance.Deff*data_instance.unsurdx**2*data_instance.dt
+    delta = -1*data_instance.Deff*data_instance.unsurdx**2*data_instance.dt
     
     #Initialisation
-    gamma0=np.zeros((5,1))
-    gamma0[4][0]=data.Ce
+    gamma0=np.zeros((data_instance.Ntt,1))
+    gamma0[-1][0]=data_instance.Ce
     Results.append(gamma0)
     
-    unit=np.ones((5,1))
+    unit=np.ones((data_instance.Ntt,1))
     #Configuration de A cas constant
     
-    A=np.zeros((5,5))
-    A[4][4]=1
+    A=np.zeros((data_instance.Ntt,data_instance.Ntt))
+    A[-1][-1]=1
     A[0][0]=-3
     A[0][1]=4
     A[0][2]=-1
     
-    for i in range (1,4):
+    for i in range (1,data_instance.Ntt-1):
         A[i][i-1]=beta
         A[i][i]=alpha
         A[i][i+1]=delta
@@ -47,16 +47,16 @@ def solver(data):
     invA=np.linalg.inv(A)
     
     #Cas constante
-    if data.const == True:
-        while t<data.itermax:
+    if data_instance.const == True:
+        while t<data_instance.itermax:
             t+=1
-            gamma0=np.dot(invA,gamma0)-data.S*data.dt*np.dot(invA,unit)
+            gamma0=np.dot(invA,gamma0)-data_instance.S*data_instance.dt*np.dot(invA,unit)
             Results.append(gamma0)
     
     #Cas non constante
-    if data.const != True:
-        invA=np.linalg.inv(A-data.k*data.dt*np.eye(5))
-        while t<data.itermax:
+    if data_instance.const != True:
+        invA=np.linalg.inv(A-data_instance.k*data_instance.dt*np.eye(5))
+        while t<data_instance.itermax:
             gamma0=np.dot(invA,gamma0)
             Results.append(gamma0)
         

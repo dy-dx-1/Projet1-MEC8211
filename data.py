@@ -7,6 +7,7 @@ Created on Thu Feb  1 11:50:58 2024
 
 
 class Data():
+
     def __init__(self,Ntt=5):
         #variables modifiable de l'utilisateur (transfere sur main may be ?)
         self.Ntt = Ntt
