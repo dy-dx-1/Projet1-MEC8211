@@ -35,9 +35,8 @@ def solver(data_instance):
     
     A=np.zeros((data_instance.Ntt,data_instance.Ntt))
     A[-1][-1]=1
-    A[0][0]=-3
-    A[0][1]=4
-    A[0][2]=-1
+    A[0][0]=1
+    A[0][1]=-1
     
     for i in range (1,data_instance.Ntt-1):
         A[i][i-1]=beta

@@ -18,15 +18,16 @@ from analytique import *
 
 def graphique(data_instance,Results):
     plt.figure(1)
-    X = [i for i in range(data_instance.Ntt)]
+    X = [i*data_instance.dx for i in range(data_instance.Ntt)]
     Y = [analytique(data_instance,i) for i in X]
-    plt.plot(X, Y)
+    plt.plot(X, Y, label='Solution analytique')
     
     
-    plt.plot(X,Results[-1])
+    plt.plot(X,Results[-1],label='Solution numérique')
     plt.grid(True)
-    plt.xlabel('Noeuds')
+    plt.xlabel('Rayon en m')
     plt.ylabel('Concentration')
     plt.title('V3 Evolution de la concentration de sel dans le pillier - {}'.format(data_instance.Ntt))
+    plt.legend()
     plt.show()
     return Y

@@ -30,7 +30,7 @@ class Data():
         
         #Valeur pour la boucle temporelle
         self.dt=1e-5 #pas précisé
-        self.itermax=10000
+        self.itermax=1000
         
     @property
     def Ntt(self):
