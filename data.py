@@ -10,7 +10,7 @@ class Data():
 
     def __init__(self,Ntt=5):
         #variables modifiable de l'utilisateur (transfere sur main may be ?)
-        self.Ntt = Ntt
+        self._Ntt = Ntt
         self.const = True
         
         #Constantes
@@ -31,3 +31,16 @@ class Data():
         #Valeur pour la boucle temporelle
         self.dt=1e-5 #pas précisé
         self.itermax=10000
+        
+    @property
+    def Ntt(self):
+        return self._Ntt
+    @Ntt.setter
+    def Ntt(self, value):
+       self._Ntt = value
+       self.update_dx()  # Appeler update_dx lorsque Ntt est modifié
+    
+    def update_dx(self):
+        # Mise à jour de dx en fonction de la nouvelle valeur de Ntt
+        self.dx = self.L / self.Ntt
+        self.unsurdx = 1 / self.dx

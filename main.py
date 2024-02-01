@@ -20,21 +20,25 @@ import data
 from data import *
 from graphique import *
 from solver import *
+from graphique_erreur import *
 
 data_instance=Data(5)
-tab_erreurL1=[]
-tab_erreurL2=[]
-tab_erreurLinf=[]
+tab_erreur=[[],[],[]]
+tab_dx=[]
 
 for n in range (1,10):
     data_instance.Ntt=5*n
+    tab_dx.append(data_instance.dx)
 
     Results=solver(data_instance)
     tableau_ana=graphique(data_instance,Results)
     
-    tab_erreurL1.append(erreurL1(data_instance,data_instance.Ntt,Results,tableau_ana))
-    tab_erreurL2.append(erreurL2(data_instance,data_instance.Ntt,Results,tableau_ana))
-    tab_erreurLinf.append(erreurLinf(data_instance,data_instance.Ntt,Results,tableau_ana))
+    tab_erreur[0].append(erreurL1(data_instance,Results,tableau_ana))
+    tab_erreur[1].append(erreurL2(data_instance,Results,tableau_ana))
+    tab_erreur[2].append(erreurLinf(data_instance,Results,tableau_ana))
+
+
+graphique_erreur(data_instance,tab_dx,tab_erreur)
 
 
 
