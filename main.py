@@ -21,17 +21,23 @@ from data import *
 from graphique import *
 from solver import *
 from graphique_erreur import *
+from solver_stationnaire import *
 
 data_instance=Data(5)
 tab_erreur=[[],[],[]]
 tab_dx=[]
 
-for n in range (1,5):
+for n in range (1,15):
     data_instance.Ntt=5*n
     tab_dx.append(data_instance.dx)
-
-    Results=solver(data_instance)
-    tableau_ana=graphique(data_instance,Results)
+    
+    if data_instance.stationnaire == True:
+        Results=solver_stationnaire(data_instance)
+        tableau_ana=analytique_sur_domaine(data_instance,[i*data_instance.dx for i in range(data_instance.Ntt)])
+    else:
+        Results=solver(data_instance)
+        tableau_ana=analytique_sur_domaine(data_instance,[i*data_instance.dx for i in range(data_instance.Ntt)])
+    graphique(data_instance,Results)
     
     tab_erreur[0].append(erreurL1(data_instance,Results,tableau_ana))
     tab_erreur[1].append(erreurL2(data_instance,Results,tableau_ana))

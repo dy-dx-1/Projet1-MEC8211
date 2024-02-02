@@ -19,7 +19,7 @@ from analytique import *
 def graphique(data_instance,Results):
     plt.figure(1)
     X = [i*data_instance.dx for i in range(data_instance.Ntt)]
-    Y = [analytique(data_instance,i) for i in X]
+    Y = analytique_sur_domaine(data_instance,X)
     plt.plot(X, Y, label='Solution analytique')
     
     
@@ -27,7 +27,7 @@ def graphique(data_instance,Results):
     plt.grid(True)
     plt.xlabel('Rayon en m')
     plt.ylabel('Concentration')
-    plt.title('V3 Evolution de la concentration de sel dans le pillier - {}'.format(data_instance.Ntt))
+    plt.title('Evolution de la concentration de sel dans le pillier - {}'.format(data_instance.Ntt))
     plt.legend()
     plt.show()
     return Y

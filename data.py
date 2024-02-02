@@ -12,6 +12,7 @@ class Data():
         #variables modifiable de l'utilisateur (transfere sur main may be ?)
         self._Ntt = Ntt
         self.const = True
+        self.stationnaire =True
         
         #Constantes
         self.Deff = 10e-10
@@ -30,6 +31,7 @@ class Data():
         
         #Valeur pour la boucle temporelle
         self.dt=0.1 #pas précisé
+        self.crit=1e-10
         self.itermax=1000
         
     @property

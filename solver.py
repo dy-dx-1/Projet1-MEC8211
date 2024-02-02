@@ -42,22 +42,27 @@ def solver(data_instance):
         A[i][i-1]=beta
         A[i][i]=alpha
         A[i][i+1]=delta
-    print(A)    
+      
     invA=np.linalg.inv(A)
-    print(invA)
+    gamma=gamma0*51
     #Cas constante
     if data_instance.const == True:
-        while t<data_instance.itermax:
+        while max(abs(gamma-gamma0))<data_instance.crit:
+            if t!=0:
+                gamma0=gamma
             t+=1
-            gamma0=np.dot(invA,gamma0)-data_instance.S*data_instance.dt*np.dot(invA,unit)          
-            Results.append(gamma0)
+            gamma=np.dot(invA,gamma0-data_instance.S*data_instance.dt*unit) 
+            
+            Results.append(gamma)
     
     #Cas non constante
     if data_instance.const != True:
-        invA=np.linalg.inv(A-data_instance.k*data_instance.dt*np.eye(5))
-        while t<data_instance.itermax:
-            gamma0=np.dot(invA,gamma0)
-            Results.append(gamma0)
+        invA=np.linalg.inv(A-data_instance.k*data_instance.dt*np.eye(data_instance.Ntt))
+        while max(abs(gamma-gamma0))<data_instance.crit:
+            if t!=0:
+                gamma0=gamma
+            gamma=np.dot(invA,gamma0)
+            Results.append(gamma)
         
 
     return Results
