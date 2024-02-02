@@ -25,18 +25,18 @@ from solver_stationnaire import *
 
 data_instance=Data(5)
 tab_erreur=[[],[],[]]
-tab_dx=[]
+tab_dr=[]
 
-for n in range (1,15):
+for n in range (1,5):
     data_instance.Ntt=5*n
-    tab_dx.append(data_instance.dx)
+    tab_dr.append(data_instance.dr)
     
     if data_instance.stationnaire == True:
         Results=solver_stationnaire(data_instance)
-        tableau_ana=analytique_sur_domaine(data_instance,[i*data_instance.dx for i in range(data_instance.Ntt)])
+        tableau_ana=analytique_sur_domaine(data_instance,[i*data_instance.dr for i in range(data_instance.Ntt)])
     else:
         Results=solver(data_instance)
-        tableau_ana=analytique_sur_domaine(data_instance,[i*data_instance.dx for i in range(data_instance.Ntt)])
+        tableau_ana=analytique_sur_domaine(data_instance,[i*data_instance.dr for i in range(data_instance.Ntt)])
     graphique(data_instance,Results)
     
     tab_erreur[0].append(erreurL1(data_instance,Results,tableau_ana))
@@ -44,7 +44,7 @@ for n in range (1,15):
     tab_erreur[2].append(erreurLinf(data_instance,Results,tableau_ana))
 
 
-graphique_erreur(data_instance,tab_dx,tab_erreur)
+graphique_erreur(data_instance,tab_dr,tab_erreur)
 
 
 

@@ -17,9 +17,9 @@ def graphique_erreur(data_instance,X,Y):
     plt.grid(True)
     plt.yscale('log')
     plt.xscale('log')
-    plt.xlabel('dx')
+    plt.xlabel('dr')
     plt.ylabel('Erreur')
-    plt.title('Evolution de l erreur1,2 et Inf en fonction de dx')
+    plt.title('Evolution de l erreur1,2 et Inf en fonction de dr')
     for i in range(1,4): 
         y=Y[i-1]
         

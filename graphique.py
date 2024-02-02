@@ -18,7 +18,7 @@ from analytique import *
 
 def graphique(data_instance,Results):
     plt.figure(1)
-    X = [i*data_instance.dx for i in range(data_instance.Ntt)]
+    X = [i*data_instance.dr for i in range(data_instance.Ntt)]
     Y = analytique_sur_domaine(data_instance,X)
     plt.plot(X, Y, label='Solution analytique')
     

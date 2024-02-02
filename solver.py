@@ -21,9 +21,9 @@ def solver(data_instance):
     #pour les boucles
     t=0
     #Constante de la matrice
-    alpha = 1 +3*data_instance.Deff*data_instance.unsurdx**2*data_instance.dt
-    beta = -2*data_instance.Deff*data_instance.unsurdx**2*data_instance.dt
-    delta = -1*data_instance.Deff*data_instance.unsurdx**2*data_instance.dt
+    alpha = 1 +3*data_instance.Deff*data_instance.unsurdr**2*data_instance.dt
+    beta = -2*data_instance.Deff*data_instance.unsurdr**2*data_instance.dt
+    delta = -1*data_instance.Deff*data_instance.unsurdr**2*data_instance.dt
     
     #Initialisation
     gamma0=np.zeros((data_instance.Ntt,1))
