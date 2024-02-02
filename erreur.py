@@ -4,20 +4,72 @@ Created on Thu Feb  1 11:47:44 2024
 
 @author: alsip
 """
-import math 
+def erreur_L1(data_instance, results, tableau_f):
+    """
+    Fonction permettant de calculer l'erreur L1.
 
-def erreurL1(data_instance,Results,tableauf):
+    Parameters
+    ----------
+    data_instance : TYPE class
+        DESCRIPTION.
+    results : TYPE tableau numpy
+        DESCRIPTION.
+    tableau_f : TYPE tableau numpy
+        DESCRIPTION.
+
+    Returns
+    -------
+    erreur : float
+        Erreur L1 calculée.
+
+    """
     erreur = 0
     for i in range(data_instance.Ntt):
-        erreur+=abs(Results[-1][i]-tableauf[i])
+        erreur += abs(results[-1][i] - tableau_f[i])
     return erreur
 
-def erreurL2(data_instance,Results,tableauf):
+def erreur_L2(data_instance, results, tableau_f):
+    """
+    Fonction permettant de calculer l'erreur L2.
+
+    Parameters
+    ----------
+    data_instance : TYPE class
+        DESCRIPTION.
+    results : TYPE tableau numpy
+        DESCRIPTION.
+    tableau_f : TYPE tableau numpy
+        DESCRIPTION.
+
+    Returns
+    -------
+    erreur : float
+        Erreur L2 calculée.
+
+    """
     erreur = 0
     for i in range(data_instance.Ntt):
-        erreur+=(Results[-1][i]-tableauf[i])**2
-    return erreur**(1/2)
+        erreur += (results[-1][i] - tableau_f[i]) ** 2
+    return erreur ** 0.5
 
-def erreurLinf(data_instance,Results,tableauf):
-    erreur=[-1*(Results[-1][i]-tableauf[i]) for i in range(data_instance.Ntt)]
+def erreur_Linf(data_instance, results, tableau_f):
+    """
+    Fonction permettant de calculer l'erreur Linf.
+
+    Parameters
+    ----------
+    data_instance : TYPE class
+        DESCRIPTION.
+    results : TYPE tableau numpy
+        DESCRIPTION.
+    tableau_f : TYPE tableau numpy
+        DESCRIPTION.
+
+    Returns
+    -------
+    erreur : float
+        Erreur Linf calculée.
+
+    """
+    erreur = [-1 * (results[-1][i] - tableau_f[i]) for i in range(data_instance.Ntt)]
     return max(erreur)

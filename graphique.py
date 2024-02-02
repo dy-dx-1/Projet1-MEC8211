@@ -1,33 +1,42 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Feb  1 11:59:25 2024
+Created on Thu Feb 1 11:59:25 2024
 
 @author: alsip
 """
 import numpy as np
-from sympy import symbols,diff,exp,sin,pi,Function
-import math
 import matplotlib.pyplot as plt
-import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
-import math
+from analytique import analytique_sur_domaine
 
+def graphique(data_instance, results):
+    """
+    Fonction pour générer un graphique de la solution analytique et numérique.
 
+    Parameters
+    ----------
+    data_instance : Data
+        Instance de la classe Data.
+    results : numpy array
+        Résultats de la solution numérique.
 
-from analytique import *
+    Returns
+    -------
+    donne_Y : numpy array
+        Solution analytique.
 
-def graphique(data_instance,Results):
+    """
     plt.figure(1)
-    X = [i*data_instance.dr for i in range(data_instance.Ntt)]
-    Y = analytique_sur_domaine(data_instance,X)
-    plt.plot(X, Y, label='Solution analytique')
+    donne_X = [i * data_instance.dr for i in range(data_instance.Ntt)]
+    donne_Y = analytique_sur_domaine(data_instance, donne_X)
     
+    plt.plot(donne_X, donne_Y, label='Solution analytique')
+    plt.plot(donne_X, results[-1], label='Solution numérique')
     
-    plt.plot(X,Results[-1],label='Solution numérique')
     plt.grid(True)
     plt.xlabel('Rayon en m')
     plt.ylabel('Concentration')
-    plt.title('Evolution de la concentration de sel dans le pillier - {}'.format(data_instance.Ntt))
+    plt.title(f'Evolution de la concentration de sel dans le pillier - {data_instance.Ntt}')
     plt.legend()
     plt.show()
-    return Y
+    
+    return donne_Y
