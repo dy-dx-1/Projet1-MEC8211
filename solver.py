@@ -1,0 +1,74 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Feb 1 11:44:14 2024
+
+@author: alsip
+"""
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Fonctions
+def solver(data_instance):
+    """
+    Solveur de la solution temporelle.
+
+    Parameters
+    ----------
+    data_instance : Data
+        Instance de la classe Data.
+
+    Returns
+    -------
+    results : list
+        Résultats de la solution.
+
+    """
+    # Pour les tracer
+    results = []
+    # Pour les boucles
+    t = 0
+    # Constante de la matrice
+    alpha = 1 + 3 * data_instance.Deff * data_instance.unsurdr**2 * data_instance.dt
+    beta = -2 * data_instance.Deff * data_instance.unsurdr**2 * data_instance.dt
+    delta = -1 * data_instance.Deff * data_instance.unsurdr**2 * data_instance.dt
+
+    # Initialisation
+    gamma0 = np.zeros((data_instance.Ntt, 1))
+    gamma0[-1][0] = data_instance.Ce
+    results.append(gamma0)
+
+    unit = np.ones((data_instance.Ntt, 1))
+    
+    # Configuration de A cas constant
+    A = np.zeros((data_instance.Ntt, data_instance.Ntt))
+    A[-1][-1] = 1
+    A[0][0] = 1
+    A[0][1] = -1
+    
+    for i in range(1, data_instance.Ntt-1):
+        A[i][i-1] = beta
+        A[i][i] = alpha
+        A[i][i+1] = delta
+
+    invA = np.linalg.inv(A)
+    gamma = gamma0 * 51
+    
+    # Cas constante
+    if data_instance.const:
+        while max(abs(gamma - gamma0)) < data_instance.crit:
+            if t != 0:
+                gamma0 = gamma
+            t += 1
+            gamma = np.dot(invA, gamma0 - data_instance.S * data_instance.dt * unit)
+            results.append(gamma)
+    
+    # Cas non constante
+    if not data_instance.const:
+        invA = np.linalg.inv(A - data_instance.k * data_instance.dt * np.eye(data_instance.Ntt))
+        while max(abs(gamma - gamma0)) < data_instance.crit:
+            if t != 0:
+                gamma0 = gamma
+            gamma = np.dot(invA, gamma0)
+            results.append(gamma)
+
+    return results
