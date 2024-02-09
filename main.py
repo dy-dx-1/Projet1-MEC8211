@@ -25,7 +25,6 @@ dom = params.domaine
 # Définissons une fonction lambda pour évaluer facilement la solution analytique 
 C_exact = lambda r: np.true_divide(params.S,4*params.D)*np.square(params.ro)*(np.square(np.divide(r, params.ro))-1)+params.C_ext 
 
-
 ### Question D: Profil de concentration stationnaire avec S constant et coeff concentration ordre 1 ; le tout avec derivée premiere ordre 1
 profil_S_constant = solve.solveur_stationnaire(params, consommation_constante=True, ordre_derive_premiere=1)
 profil_S_ordre1 = solve.solveur_stationnaire(params, consommation_constante=False, ordre_derive_premiere=1)
