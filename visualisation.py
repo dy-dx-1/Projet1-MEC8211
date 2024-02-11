@@ -1,12 +1,26 @@
 import matplotlib.pyplot as plt 
+import numpy as np 
 
-def graphique(title:str, xaxis:str, yaxis:str, *value_pairs):
+def generate_n_graphs(params:object, solver_function, n_values:list)->list:
+    """ 
+    Fonction qui prend la fonction lambda d'un solveur ainsi qu'une liste de points à utiliser N 
+    et génére une liste de résultats compatibles avec la fonction show_graphs. 
+    """
+    graphiques = [] 
+    for noeuds in n_values:  # génération de résultats pour différents types de noeuds
+        params.N = noeuds
+        params.domaine = np.linspace(0, params.ro, noeuds)
+        profil_S_constant = solver_function() 
+        graphiques.append((params.domaine, profil_S_constant, f"Numérique, N = {params.N}", ".-"))
+    return graphiques 
+
+def show_graphs(title:str, xaxis:str, yaxis:str, value_pairs:list):
     """
     Fonction permettant de générer et formatter facilement plusieurs graphiques avec des axes standard.
 
     Parameters
     ----------
-    value_pairs: tuples (dom, img, label, linestyle)
+    value_pairs: list of tuples (dom, img, label, linestyle)
     """
     for plot in value_pairs: 
         dom = plot[0]
