@@ -3,7 +3,7 @@ Fichier regroupant les méthodes numériques
 """
 import numpy as np; np.set_printoptions(precision=2, linewidth=150) # permet d'imprimer les arrays de manière plus compacte pr les inspecter 
 
-def solveur_stationnaire(data, consommation_constante:bool, ordre_derive_premiere:int): 
+def solveur_stationnaire(data:object, consommation_constante:bool, ordre_derive_premiere:int): 
     """
     Résout la diffusion dans le pilier dans le régime permanent. 
 
@@ -61,15 +61,15 @@ def solveur_stationnaire(data, consommation_constante:bool, ordre_derive_premier
     C = np.linalg.solve(A, B)[:,0] # Retour sous la forme [C0, C1, ..., CN]
     return C
 
-def solveur_transitoire(): 
-    ###TODO: ADAPTER SOLVEUR TRANSITOIRE AU NOUVEAU FORMAT (COMME SOLVEUR STATIONNAIRE)
-    N = 5 
+def solveur_transitoire(data:object, consommation_constante:bool, ordre_derive_premiere:int): 
+    ## Setup params situation
+    ro, D, S, k, C_ext, N, domaine = data.ro, data.D, data.S, data.k, data.C_ext, data.N, data.domaine
+    dr = ro/(N-1)   # pas de discrétisation spatiale 
+
     dt = 500
     t = 0 # temps initial 
     nb_jours = 1000
     t_sim = nb_jours*60*60*24 # temps de simulation 
-    domaine = np.linspace(0, ro, N)
-    dr = ro/(N-1) 
 
     ## Coefficients associés aux noeuds 
     alpha = lambda ri: np.true_divide(-D, np.square(dr)) - np.true_divide(D, dr*ri) # ci+1
@@ -79,8 +79,8 @@ def solveur_transitoire():
     ### conditions initiales 
     C = np.zeros(N) 
     Ci = 0 
-    for i in range(N): C[i]=Ci 
-
+    for i in range(N): 
+        C[i]=Ci 
     while t<=t_sim: 
         A = np.zeros((N, N))
         B = np.zeros((N, 1))
@@ -103,4 +103,4 @@ def solveur_transitoire():
         C_new = np.linalg.solve(A, B) # nouvelles valeurs donc on peut passer à la prochaine itération 
         C =np.copy(C_new)
         t+=dt
-
+    return C 
