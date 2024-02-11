@@ -15,13 +15,8 @@ def solveur_stationnaire(data:object, consommation_constante:bool, ordre_derive_
     ro, D, S, k, C_ext, N, domaine = data.ro, data.D, data.S, data.k, data.C_ext, data.N, data.domaine
     dr = ro/(N-1)   # pas de discrétisation spatiale 
 
-    ## Initialisation des matrices 
-    A = np.zeros((N, N))
-    B = np.zeros((N, 1))
-
-    ## Remplissage du centre
+    # Coefficients associés aux noeuds 
     if ordre_derive_premiere==1: # approx d'ordre 1 pas avant 
-        # Coefficients associés aux noeuds 
         alpha = lambda ri: np.true_divide(D, np.square(dr)) + np.true_divide(D, dr*ri) # ci+1
         beta_ = lambda ri: np.true_divide(-2*D, dr**2) - np.true_divide(D, ri*dr)       # ci, _ car il sera encore modifie selon S 
         zeta = lambda ri: np.true_divide(D, dr**2)                                                # ci-1   
@@ -40,6 +35,11 @@ def solveur_stationnaire(data:object, consommation_constante:bool, ordre_derive_
         coeff_droite = 0
         beta = lambda ri: beta_(ri)-k 
 
+    ## Initialisation des matrices 
+    A = np.zeros((N, N))
+    B = np.zeros((N, 1))
+
+    ## Remplissage du centre 
     for i in range(1, N-1): # descente verticale (sur les lignes)
         r = domaine[i]
         A[i, i+1] = alpha(r)
@@ -68,13 +68,31 @@ def solveur_transitoire(data:object, consommation_constante:bool, ordre_derive_p
 
     dt = 500
     t = 0 # temps initial 
-    nb_jours = 1000
-    t_sim = nb_jours*60*60*24 # temps de simulation 
+    nb_annees = 5
+    nb_jours = nb_annees*365.25
+    t_sim = int(nb_jours*60*60*24) # temps de simulation 
+    print(f"Simulation transitoire lancée avec {N=}noeuds ; {dt=}s ; pendant {nb_annees=} annees")
 
     ## Coefficients associés aux noeuds 
-    alpha = lambda ri: np.true_divide(-D, np.square(dr)) - np.true_divide(D, dr*ri) # ci+1
-    beta = lambda ri: np.true_divide(1,dt) + np.true_divide(2*D, dr**2) + np.true_divide(D, ri*dr)
-    zeta = np.true_divide(-D, dr**2)
+    if ordre_derive_premiere==1: # approx d'ordre 1 pas avant 
+        # Coefficients associés aux noeuds 
+        alpha = lambda ri: np.true_divide(D, np.square(dr)) + np.true_divide(D, dr*ri) # ci+1
+        beta_ = lambda ri: -np.true_divide(1, dt)-np.true_divide(2*D, dr**2) - np.true_divide(D, ri*dr)       # ci, _ car il sera encore modifie selon S 
+        zeta = lambda ri: np.true_divide(D, dr**2)                                                # ci-1   
+    elif ordre_derive_premiere==2: # approx d'ordre 2 centrée 
+        alpha = lambda ri: np.true_divide(D, np.square(dr)) + np.true_divide(D, 2*dr*ri) # ci+1
+        beta_ = lambda ri: np.true_divide(-2*D, dr**2)            # ci, _ car il sera encore modifie selon S 
+        zeta = lambda ri: np.true_divide(D, dr**2) - np.true_divide(D, 2*dr*ri)    # ci-1  
+    else: # pas supporté 
+        print("Ordre de disc derive premiere autre que 1 ou 2 non supporté")
+        return None  
+    
+    if consommation_constante: # affecte le membre de droite et beta 
+        coeff_droite = lambda Ci_t: S - np.true_divide(Ci_t, dt)
+        beta = beta_ 
+    else: 
+        coeff_droite = lambda Ci_t: -np.true_divide(Ci_t, dt)
+        beta = lambda ri: beta_(ri)-k 
 
     ### conditions initiales 
     C = np.zeros(N) 
@@ -89,12 +107,13 @@ def solveur_transitoire(data:object, consommation_constante:bool, ordre_derive_p
             r = domaine[i]
             A[i, i+1] = alpha(r)
             A[i, i] = beta(r) 
-            A[i, i-1] = zeta 
-            B[i, 0] = np.true_divide(C[i], dt) - S # le C indexé correspond au C au temps t, vu qu'on calcule pour le t+1 
+            A[i, i-1] = zeta(r)
+            B[i, 0] = coeff_droite(C[i]) # le C indexé correspond au C au temps t, vu qu'on calcule pour le t+1 
         ### Ajout des conditions limites 
         ## Neumann 
-        A[0, 0] = -1 
-        A[0, 1] = 1 ## mntn derivee avant ordre 1 
+        A[0, 0] = -3 
+        A[0, 1] = 4
+        A[0, 2] = -1 
         B[0, 0] = 0 
         ## Dirichlet 
         A[N-1, N-1] = 1 
