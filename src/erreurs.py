@@ -2,7 +2,7 @@
 """
 Fichier regroupant les fonctions de calcul d'erreur. 
 """
-def erreur_L1(data_instance, results, tableau_f):
+def erreur_L1(domaine, results_numerique, results_analytique):
     """
     Fonction permettant de calculer l'erreur L1.
 
@@ -22,11 +22,11 @@ def erreur_L1(data_instance, results, tableau_f):
 
     """
     erreur = 0
-    for i in range(data_instance.N):
-        erreur += abs(results[-1][i] - tableau_f[i])
-    return erreur
+    for i in range(len(domaine)):
+        erreur += abs(results_numerique[i] - results_analytique[i])
+    return erreur/len(domaine)
 
-def erreur_L2(data_instance, results, tableau_f):
+def erreur_L2(domaine, results_numerique, results_analytique):
     """
     Fonction permettant de calculer l'erreur L2.
 
@@ -46,11 +46,11 @@ def erreur_L2(data_instance, results, tableau_f):
 
     """
     erreur = 0
-    for i in range(data_instance.N):
-        erreur += (results[-1][i] - tableau_f[i]) ** 2
-    return erreur ** 0.5
+    for i in range(len(domaine)):
+        erreur += (results_numerique[i] - results_analytique[i]) ** 2
+    return (erreur/len(domaine)) ** 0.5
 
-def erreur_Linf(data_instance, results, tableau_f):
+def erreur_Linf(domaine, results_numerique, results_analytique):
     """
     Fonction permettant de calculer l'erreur Linf.
 
@@ -69,5 +69,5 @@ def erreur_Linf(data_instance, results, tableau_f):
         Erreur Linf calculée.
 
     """
-    erreur = [-1 * (results[-1][i] - tableau_f[i]) for i in range(data_instance.N)]
+    erreur = abs(results_numerique - results_analytique)
     return max(erreur)

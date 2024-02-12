@@ -58,15 +58,15 @@ def show_graphs(title:str, xaxis:str, yaxis:str, value_pairs:list):
     plt.savefig(f'../results/{title.strip().lower().replace(" ", "")}', bbox_inches='tight')
     plt.show()
 
-def show_err_graphs(data_instance, dr_values, error_lists):
+def graphique_erreur(titre,x_values, y_values):
     """
     Affiche un graphique de l'évolution de l'erreur en fonction de dr.
 
     Parameters
     ----------
-    data_instance : instance de la classe Data
-        Instance contenant les données du problème.
-    dr_values : list
+    titre : ordre de la soltuion
+        
+    x_values : list
         Liste des valeurs de dr.
     y_values : list of lists
         Liste des erreurs L1, L2, et Linf.
@@ -79,16 +79,14 @@ def show_err_graphs(data_instance, dr_values, error_lists):
     plt.yscale('log')
     plt.xscale('log')
     plt.xlabel('dr')
-    plt.ylabel('Erreur')
-    plt.title(r'Evolution de l erreur $L_1$, $L_2$ et $L_∞$ en fonction de dr')
+    plt.ylabel('Erreurs')
+    plt.title('Evolution des erreurs L1, L2 et Linf en fonction de dr '+ titre)
 
-    for i in range(1, 4):
-        y = error_lists[i - 1]
-
-        if i != 3:
-            plt.plot(dr_values, y, label=f'Erreur L{i}')
+    for i in range(3):
+        if i != 2:
+            plt.plot(x_values, y_values[i], label=f'Erreur L{i+1}')
         else:
-            plt.plot(dr_values, y, label='Erreur Linf')
+            plt.plot(x_values, y_values[i], label='Erreur Linf')
 
     plt.legend()
     plt.show()
