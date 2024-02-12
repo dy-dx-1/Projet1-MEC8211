@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np 
 import solveurs as solve 
-from erreurs import erreur_L1, erreur_L2, erreur_Linf
+from erreurs import erreur_L1, erreur_L2, erreur_Linf,erreur_de_convergence_observe
 from visualisation import show_graphs, graphique_erreur, generate_n_graphs
 
 ### Définition du problème 
@@ -24,11 +24,11 @@ def main():
     dom_analytique = np.linspace(0, params.ro, 100) 
     C_exact_domaine = C_exact(dom_analytique) # Concentration exacte évaluée sur le domaine de discrétisation 
 
-    ### Question D: Profil de concentration stationnaire avec S constant et coeff concentration ordre 1 ; le tout avec derivée premiere ordre 1
-    profil_S_constant_trans = solve.solveur_transitoire(params, consommation_constante=True, ordre_derive_premiere=1)
-    profil_S_ordre1_trans = solve.solveur_transitoire(params, consommation_constante=False, ordre_derive_premiere=1)
-    graphiques_D = [(params.domaine, profil_S_constant_trans, r"$S=8*10^{-9}$", ".-"), (params.domaine, profil_S_ordre1_trans, r"$S=k*C$", ".-")]
-    show_graphs(f"Profil de concentration transitoire après 10 ans selon le type de source", "Position radiale [m]", r"Concentration [mol/$m^3$]", graphiques_D)
+    # ### Question D: Profil de concentration stationnaire avec S constant et coeff concentration ordre 1 ; le tout avec derivée premiere ordre 1
+    # profil_S_constant_trans = solve.solveur_transitoire(params, consommation_constante=True, ordre_derive_premiere=1)
+    # profil_S_ordre1_trans = solve.solveur_transitoire(params, consommation_constante=False, ordre_derive_premiere=1)
+    # graphiques_D = [(params.domaine, profil_S_constant_trans, r"$S=8*10^{-9}$", ".-"), (params.domaine, profil_S_ordre1_trans, r"$S=k*C$", ".-")]
+    # show_graphs(f"Profil de concentration transitoire après 10 ans selon le type de source", "Position radiale [m]", r"Concentration [mol/$m^3$]", graphiques_D)
 
     ### Question E: Comparaison entre sol stationnaire S constant et analytique, avec derive_premiere d'ordre 1
     cas_a_resoudre = lambda: solve.solveur_stationnaire(params, consommation_constante=True, ordre_derive_premiere=1)
@@ -47,8 +47,7 @@ def main():
         Erreur_Linf.append(erreur_Linf(graphiques_E[i][0],graphiques_E[i][1],C_exact(graphiques_E[i][0])))
         
     graphique_erreur("ordre 1",n_values,[Erreur_L1,Erreur_L2,Erreur_Linf])
-
-    ### Question F: Profils avec différentiation ordre 2 
+    erreur_de_convergence_observe(params,n_values,Erreur_L1,Erreur_L2,Erreur_Linf)
     # Valeurs exactes ne changent évidamment pas 
     cas_a_resoudre = lambda: solve.solveur_stationnaire(params, consommation_constante=True, ordre_derive_premiere=2)
     graphiques_D = generate_n_graphs(params, cas_a_resoudre, n_values=[5, 20, 50])
@@ -66,6 +65,7 @@ def main():
         Erreur_Linf.append(erreur_Linf(graphiques_D[i][0],graphiques_D[i][1],C_exact(graphiques_D[i][0])))
         
     graphique_erreur("ordre 2",n_values,[Erreur_L1,Erreur_L2,Erreur_Linf]) 
+    #erreur_de_convergence_observe(params,n_values,Erreur_L1,Erreur_L2,Erreur_Linf)
     return None 
 
 if __name__=="__main__": 

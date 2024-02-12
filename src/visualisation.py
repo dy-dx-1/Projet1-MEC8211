@@ -75,18 +75,21 @@ def graphique_erreur(titre,x_values, y_values):
     -------
     None
     """
+    title='Evolution des erreurs L1, L2 et Linf en fonction de dr '+ titre
+    x_dr=[0.5/(x_values[i]-1) for i in range(len(x_values))]
     plt.grid(True)
     plt.yscale('log')
     plt.xscale('log')
     plt.xlabel('dr')
     plt.ylabel('Erreurs')
-    plt.title('Evolution des erreurs L1, L2 et Linf en fonction de dr '+ titre)
+    plt.title(title)
 
     for i in range(3):
         if i != 2:
-            plt.plot(x_values, y_values[i], label=f'Erreur L{i+1}')
+            plt.plot(x_dr, y_values[i], label=f'Erreur L{i+1}')
         else:
-            plt.plot(x_values, y_values[i], label='Erreur Linf')
+            plt.plot(x_dr, y_values[i], label='Erreur Linf')
 
     plt.legend()
+    plt.savefig(f'../results/{title.strip().lower().replace(" ", "")}', bbox_inches='tight')
     plt.show()
