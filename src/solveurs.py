@@ -1,16 +1,23 @@
+import numpy as np; np.set_printoptions(precision=2, linewidth=150) # permet d'imprimer les arrays de manière plus compacte pr les inspecter 
+
 """
 Fichier regroupant les méthodes numériques 
 """
-import numpy as np; np.set_printoptions(precision=2, linewidth=150) # permet d'imprimer les arrays de manière plus compacte pr les inspecter 
 
 def solveur_stationnaire(data:object, consommation_constante:bool, ordre_derive_premiere:int): 
     """
     Résout la diffusion dans le pilier dans le régime permanent. 
 
-    data: obj contenant les paramètres suivants:
-        [...]
-    N: nombre de points de discrétisation du domaine 
+    
+    Parameters
+    ----------
+    data: objet contenant les paramètres de simulation 
+    consommation_constante: bool indiquant si la source de concentration est constante ou non (d'ordre 1)
     ordre_derive_premiere: Ordre de la discrétisation spatiale des dérivées premieres qui ne sont pas au bord 
+    
+    Returns
+    ----------
+    Array 1D [1xNoeuds] du profil de concentration dans la poutre 
     """
     ro, D, S, k, C_ext, N, domaine = data.ro, data.D, data.S, data.k, data.C_ext, data.N, data.domaine
     dr = ro/(N-1)   # pas de discrétisation spatiale 
@@ -62,13 +69,26 @@ def solveur_stationnaire(data:object, consommation_constante:bool, ordre_derive_
     return C
 
 def solveur_transitoire(data:object, consommation_constante:bool, ordre_derive_premiere:int): 
+    """
+    Résout la diffusion dans le pilier dans le régime transitoire à l'aide d'un schéma Euler implicite. 
+    
+    Parameters
+    ----------
+    data: objet contenant les paramètres de simulation 
+    consommation_constante: bool indiquant si la source de concentration est constante ou non (d'ordre 1)
+    ordre_derive_premiere: Ordre de la discrétisation spatiale des dérivées premieres qui ne sont pas au bord 
+    
+    Returns
+    ----------
+    Array 1D [1xNoeuds] du profil de concentration dans la poutre 
+    """
     ## Setup params situation
     ro, D, S, k, C_ext, N, domaine = data.ro, data.D, data.S, data.k, data.C_ext, data.N, data.domaine
     dr = ro/(N-1)   # pas de discrétisation spatiale 
 
     dt = 500
     t = 0 # temps initial 
-    nb_annees = 5
+    nb_annees = 10
     nb_jours = nb_annees*365.25
     t_sim = int(nb_jours*60*60*24) # temps de simulation 
     print(f"Simulation transitoire lancée avec {N=}noeuds ; {dt=}s ; pendant {nb_annees=} annees")

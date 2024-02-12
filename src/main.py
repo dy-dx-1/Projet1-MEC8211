@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-@authors: alcaru
-"""
 import numpy as np 
 import solveurs as solve 
 from erreurs import erreur_L1, erreur_L2, erreur_Linf

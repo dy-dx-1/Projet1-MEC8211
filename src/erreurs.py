@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Feb  1 11:47:44 2024
-
-@author: alsip
+Fichier regroupant les fonctions de calcul d'erreur. 
 """
 def erreur_L1(data_instance, results, tableau_f):
     """

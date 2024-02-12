@@ -1,10 +1,24 @@
 import matplotlib.pyplot as plt 
 import numpy as np 
 
+"""
+Fichier regroupant les fonctions servant à la génération de graphiques. 
+"""
+
 def generate_n_graphs(params:object, solver_function, n_values:list)->list:
     """ 
     Fonction qui prend la fonction lambda d'un solveur ainsi qu'une liste de points à utiliser N 
     et génére une liste de résultats compatibles avec la fonction show_graphs. 
+
+    Parameters
+    ----------
+    params: paramètres de la simulation
+    solver function: fonction résolvant le profil de concentration 
+    n_values: liste du nombre de noeuds à faire varier 
+ 
+    Returns 
+    ----------
+    liste de tuples sous format [(domaine, image, label)]
     """
     graphiques = [] 
     for noeuds in n_values:  # génération de résultats pour différents types de noeuds
@@ -20,7 +34,14 @@ def show_graphs(title:str, xaxis:str, yaxis:str, value_pairs:list):
 
     Parameters
     ----------
+    title: title of the graph
+    xaxis: label for the x axis 
+    yaxis: label for the y axis 
     value_pairs: list of tuples (dom, img, label, linestyle)
+
+    Returns 
+    ----------
+    None 
     """
     for plot in value_pairs: 
         dom = plot[0]
@@ -37,7 +58,7 @@ def show_graphs(title:str, xaxis:str, yaxis:str, value_pairs:list):
     plt.savefig(f'../results/{title.strip().lower().replace(" ", "")}', bbox_inches='tight')
     plt.show()
 
-def graphique_erreur(data_instance, x_values, y_values):
+def show_err_graphs(data_instance, dr_values, error_lists):
     """
     Affiche un graphique de l'évolution de l'erreur en fonction de dr.
 
@@ -45,7 +66,7 @@ def graphique_erreur(data_instance, x_values, y_values):
     ----------
     data_instance : instance de la classe Data
         Instance contenant les données du problème.
-    x_values : list
+    dr_values : list
         Liste des valeurs de dr.
     y_values : list of lists
         Liste des erreurs L1, L2, et Linf.
@@ -59,15 +80,15 @@ def graphique_erreur(data_instance, x_values, y_values):
     plt.xscale('log')
     plt.xlabel('dr')
     plt.ylabel('Erreur')
-    plt.title('Evolution de l erreur L1, L2 et Linf en fonction de dr')
+    plt.title(r'Evolution de l erreur $L_1$, $L_2$ et $L_∞$ en fonction de dr')
 
     for i in range(1, 4):
-        y = y_values[i - 1]
+        y = error_lists[i - 1]
 
         if i != 3:
-            plt.plot(x_values, y, label=f'Erreur L{i}')
+            plt.plot(dr_values, y, label=f'Erreur L{i}')
         else:
-            plt.plot(x_values, y, label='Erreur Linf')
+            plt.plot(dr_values, y, label='Erreur Linf')
 
     plt.legend()
     plt.show()
