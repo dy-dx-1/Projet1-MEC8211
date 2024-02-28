@@ -107,8 +107,8 @@ def graphique_erreur(titre,x_values, y_values):
            nom_erreur=f'L{i+1}'
         else:
            nom_erreur='$L_{inf}$'
-        
-        coefficients = np.polyfit(np.log(x_dr[:3]), np.log(error_values[:3]), 1)
+
+        coefficients = np.polyfit(np.log(x_dr[4:]), np.log(error_values[4:]), 1)
         exponent = coefficients[0]
     
         # Fonction de régression en termes de logarithmes

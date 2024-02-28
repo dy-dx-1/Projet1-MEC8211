@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from math import log
+import numpy as np
 """
 Fichier regroupant les fonctions de calcul d'erreur. 
 """
@@ -76,7 +77,7 @@ def erreur_Linf(domaine, results_numerique, results_analytique):
 def erreur_de_convergence_observe(params,n_values,Erreur_L1,Erreur_L2,Erreur_Linf):
     x_dr=[params.ro/(n_values[i]-1) for i in range(len(n_values))]
     print("Ordre de convergence observé")
-    print("Erreur L1 " + str(log(Erreur_L1[0]/Erreur_L1[2])/log(x_dr[0]/x_dr[2])))
-    print("Erreur L2 " +str((log(Erreur_L2[0]/Erreur_L2[2])/log(x_dr[0]/x_dr[2]))))
-    print("Erreur Linf " +str((log(Erreur_Linf[0]/Erreur_Linf[2])/log(x_dr[0]/x_dr[2]))))
+    print("Erreur L1 " + str(np.polyfit(np.log(x_dr[4:]), np.log(Erreur_L1[4:]), 1)[0]))
+    print("Erreur L2 " + str(np.polyfit(np.log(x_dr[4:]), np.log(Erreur_L2[4:]), 1)[0]))
+    print("Erreur Linf " + str(np.polyfit(np.log(x_dr[4:]), np.log(Erreur_Linf[4:]), 1)[0]))
     ### Question F: Profils avec différentiation ordre 2 
