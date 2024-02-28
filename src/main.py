@@ -17,7 +17,7 @@ class Data:
 
 def main(): 
     params = Data() 
-    n_values=[5, 20, 50]
+    n_values=[5, 20, 50, 100, 500, 1000, 5000]
     ### Solution analytique 
     # Définissons une fonction lambda pour évaluer facilement la solution analytique 
     C_exact = lambda r: np.true_divide(params.S,4*params.D)*np.square(params.ro)*(np.square(np.divide(r, params.ro))-1)+params.C_ext 
@@ -33,7 +33,7 @@ def main():
     ### Question E: Comparaison entre sol stationnaire S constant et analytique, avec derive_premiere d'ordre 1
     cas_a_resoudre = lambda: solve.solveur_stationnaire(params, consommation_constante=True, ordre_derive_premiere=1)
     graphiques_E = generate_n_graphs(params, cas_a_resoudre, n_values)
-    graphiques_E.append((dom_analytique, C_exact_domaine, f"Analytique avec N = 100", "-")) 
+    graphiques_E.append((dom_analytique, C_exact_domaine, "Analytique avec N = 100", "-")) 
     show_graphs("Profil obtenu numériquement et analytiquement pour une source constante et approx dérivée première ordre 1", "Position radiale [m]", r"Concentration [mol/$m^3$]",
             graphiques_E)
 
@@ -50,8 +50,8 @@ def main():
     erreur_de_convergence_observe(params,n_values,Erreur_L1,Erreur_L2,Erreur_Linf)
     # Valeurs exactes ne changent évidamment pas 
     cas_a_resoudre = lambda: solve.solveur_stationnaire(params, consommation_constante=True, ordre_derive_premiere=2)
-    graphiques_D = generate_n_graphs(params, cas_a_resoudre, n_values=[5, 20, 50])
-    graphiques_D.append((dom_analytique, C_exact_domaine, f"Analytique avec N = 100", "-")) 
+    graphiques_D = generate_n_graphs(params, cas_a_resoudre, n_values)
+    graphiques_D.append((dom_analytique, C_exact_domaine, "Analytique avec N = 100", "-")) 
     show_graphs("Profil obtenu numériquement et analytiquement pour une source constante et approx dérivée première ordre 2", "Position radiale [m]", r"Concentration [mol/$m^3$]",
             graphiques_D)
     # Question F)a)
@@ -64,7 +64,7 @@ def main():
         Erreur_L2.append(erreur_L2(graphiques_D[i][0],graphiques_D[i][1],C_exact(graphiques_D[i][0])))
         Erreur_Linf.append(erreur_Linf(graphiques_D[i][0],graphiques_D[i][1],C_exact(graphiques_D[i][0])))
         
-    graphique_erreur("ordre 2",n_values,[Erreur_L1,Erreur_L2,Erreur_Linf]) 
+    #graphique_erreur("ordre 2",n_values,[Erreur_L1,Erreur_L2,Erreur_Linf]) 
     #erreur_de_convergence_observe(params,n_values,Erreur_L1,Erreur_L2,Erreur_Linf)
     return None 
 
