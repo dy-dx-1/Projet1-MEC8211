@@ -88,9 +88,9 @@ def solveur_transitoire(data:object, consommation_constante:bool, ordre_derive_p
 
     dt = 500
     t = 0 # temps initial 
-    nb_annees = 10
-    nb_jours = nb_annees*365.25
-    t_sim = int(nb_jours*60*60*24) # temps de simulation 
+    nb_annees = 0
+    nb_jours = 10
+    t_sim = int(200) # temps de simulation 
     print(f"Simulation transitoire lancée avec {N=}noeuds ; {dt=}s ; pendant {nb_annees=} annees")
 
     ## Coefficients associés aux noeuds 
@@ -138,6 +138,7 @@ def solveur_transitoire(data:object, consommation_constante:bool, ordre_derive_p
         ## Dirichlet 
         A[N-1, N-1] = 1 
         B[N-1, 0] = C_ext 
+        
         ### Solution du système 
         C_new = np.linalg.solve(A, B) # nouvelles valeurs donc on peut passer à la prochaine itération 
         C =np.copy(C_new)

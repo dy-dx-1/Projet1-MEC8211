@@ -48,7 +48,7 @@ def show_graphs(title:str, xaxis:str, yaxis:str, value_pairs:list):
         img = plot[1]
         text = plot[2]
         style = plot[3]
-        plt.plot(dom, img,  style,linestyle='-', marker='o', label=text)
+        plt.plot(dom, img,  style, label=text)
     
     plt.grid(True)
     plt.xlabel(xaxis)
