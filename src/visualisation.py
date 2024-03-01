@@ -48,7 +48,7 @@ def show_graphs(title:str, xaxis:str, yaxis:str, value_pairs:list):
         img = plot[1]
         text = plot[2]
         style = plot[3]
-        plt.plot(dom, img,  style,linestyle='-', marker='o', label=text)
+        plt.plot(dom, img,  style, marker='o', label=text)
     
     plt.grid(True)
     plt.xlabel(xaxis)
@@ -86,9 +86,9 @@ def graphique_erreur(titre,x_values, y_values):
 
     for i in range(3):
         if i != 2:
-            plt.plot(x_dr, y_values[i],linestyle='-', marker='o', label=f'Erreur L{i+1}')
+            plt.plot(x_dr, y_values[i],linestyle="-", marker='o', label=f'Erreur L{i+1}')
         else:
-            plt.plot(x_dr, y_values[i],linestyle='-', marker='o', label='Erreur Linf')
+            plt.plot(x_dr, y_values[i],linestyle="-", marker='o', label='Erreur Linf')
     
     plt.legend()
     plt.savefig(f'../results/{title.strip().lower().replace(" ", "")}', bbox_inches='tight')
