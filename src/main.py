@@ -13,7 +13,7 @@ class Data:
     k = 4*(10**(-9)) # constante de réaction si réaction du premier ordre 
     C_ext = 12 # Concentration à l'extérieur 
 
-    N = 50 
+    N = 5
     domaine = np.linspace(0, ro, N)
 
 def main(): 
@@ -73,15 +73,29 @@ def main():
     Travail 2
     """
     #Tracer la solution avec S non constant et ordre 2
-    
+    nb_annees = 100
+    nb_jours = nb_annees*365.25
+    t_sim = int(nb_jours*24*60*60) # temps de simulation
     #Solution_ordre_1 = solve.solveur_transitoire(params, consommation_constante=False, ordre_derive_premiere=1)
-    Solution_ordre_2 = solve.solveur_transitoire(params, consommation_constante=True, ordre_derive_premiere=2)
+    C_exact_MMS = lambda r,t: np.sin(t)*np.cos(np.pi * np.divide(r, params.ro))+params.C_ext 
+    dom_analytique = np.linspace(0, params.ro, 100) 
+    C_exact_domaine_MMS = C_exact_MMS(dom_analytique,t_sim) # Concentration exacte évaluée sur le domaine de discrétisation 
+
+    params.S = lambda r,t: (np.cos(t) * np.cos(np.divide(np.pi*r,(2*params.ro))) 
+                        + np.divide(params.D,r) * np.sin(t) * np.sin(np.divide(np.pi*r,(2*params.ro))) * np.divide(np.pi,(2*params.ro))
+                        + params.D * np.sin(t) * np.cos(np.divide(np.pi*r,(2*params.ro))) * (np.divide(np.pi,(2*params.ro)))**2
+                        + params.k * C_exact_MMS(r,t))
+    #Solution_ordre_2 = solve.solveur_transitoire(params, consommation_constante=False, ordre_derive_premiere=2)
+    Solution_MMS = solve.solveur_MMS(params, consommation_constante=False, ordre_derive_premiere=2)
+    
     #plt.plot(params.domaine,Solution_ordre_1,label="ordre 1")
-    print(Solution_ordre_2)
-    plt.plot(dom_analytique,C_exact_domaine,label="Analytique")
-    plt.plot(params.domaine,Solution_ordre_2,label="ordre 2")
+    print(Solution_MMS)
+    plt.plot(dom_analytique,C_exact_domaine_MMS,label="Analytique")
+    plt.plot(params.domaine,Solution_MMS,label="MMS")
     plt.legend()
     plt.show()
+    
+    
 
 if __name__=="__main__": 
     main() 
