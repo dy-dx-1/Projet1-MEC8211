@@ -108,7 +108,8 @@ def graphique_erreur(titre,x_values, y_values):
         else:
            nom_erreur='$L_{inf}$'
 
-        coefficients = np.polyfit(np.log(x_dr[4:]), np.log(error_values[4:]), 1)
+        # PRENONS LES 3 DERNIERS DR (LES PLUS PETITS)
+        coefficients = np.polyfit(np.log(x_dr[-3:]), np.log(error_values[-3:]), 1)
         exponent = coefficients[0]
     
         # Fonction de régression en termes de logarithmes
@@ -125,8 +126,7 @@ def graphique_erreur(titre,x_values, y_values):
         plt.scatter(x_dr, error_values, marker='o', color='b', label='Données numériques obtenues')
         plt.plot(x_dr, fit_function(x_dr), linestyle='--', color='r', label='Régression en loi de puissance')
         # Ajouter des étiquettes et un titre au graphique
-        
-        
+              
         
         title='Convergence de l\'erreur' + nom_erreur +' en fonction de $Δx $'+titre
         
@@ -147,7 +147,10 @@ def graphique_erreur(titre,x_values, y_values):
         plt.tick_params(width=2, which='both', direction='in', top=True, right=True, length=6)
         
         # Afficher l'équation de la régression en loi de puissance
-        equation_text = nom_erreur + f'$= {np.exp(coefficients[1]):.4f} \\times Δx^{{{exponent:.4f}}}$'
+        if i != 2:
+            equation_text = nom_erreur + f'= {np.exp(coefficients[1])[0]:.4f} * Δx^({exponent[0]:.4f})'
+        else: 
+            equation_text = nom_erreur + f'= {np.exp(coefficients[1]):.4f} * Δx^({exponent:.4f})'
         equation_text_obj = plt.text(0.05, 0.05, equation_text, fontsize=12, transform=plt.gca().transAxes, color='k')
         
         # Déplacer la zone de texte
