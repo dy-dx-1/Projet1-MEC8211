@@ -4,6 +4,8 @@ import solveurs as solve
 from erreurs import erreur_L1, erreur_L2, erreur_Linf,erreur_de_convergence_observe
 from visualisation import show_graphs, graphique_erreur, generate_n_graphs
 import matplotlib.pyplot as plt
+import sympy as sp
+import math as math
 
 ### Définition du problème 
 class Data:  
@@ -76,15 +78,33 @@ def main():
     nb_annees = 100
     nb_jours = nb_annees*365.25
     t_sim = int(nb_jours*24*60*60) # temps de simulation
-    #Solution_ordre_1 = solve.solveur_transitoire(params, consommation_constante=False, ordre_derive_premiere=1)
-    C_exact_MMS = lambda r,t: np.sin(t)*np.cos(np.pi * np.divide(r, params.ro))+params.C_ext 
-    dom_analytique = np.linspace(0, params.ro, 100) 
-    C_exact_domaine_MMS = C_exact_MMS(dom_analytique,t_sim) # Concentration exacte évaluée sur le domaine de discrétisation 
+    
+    #2eme MMS
+    C_ext=params.C_ext
+    R=params.ro
+    D=params.D
+    k=params.k
+    
+    C_MMS = lambda r, t: C_ext + t * (1 - r**2 / (R**2)) * np.cos(r) / t_sim
+    dC_MMS_r = lambda r, t: (t / t_sim) * (-2 * r * np.cos(r) / R**2 - (1 - ((r / R)**2)) * np.sin(r))
+    ddC_MMS_r = lambda r, t:(t / t_sim) * (-2 * (1 / R**2 * np.cos(r) - r / R**2 * np.sin(r)) - np.cos(r) * (1 - r**2 / R**2) + np.sin(r) * (2 * r / R**2))
+    dC_MMS_t = lambda r, t: (1 - r**2 / (R**2)) * np.cos(r) / t_sim
 
-    params.S = lambda r,t: (np.cos(t) * np.cos(np.divide(np.pi*r,(2*params.ro))) 
-                        + np.divide(params.D,r) * np.sin(t) * np.sin(np.divide(np.pi*r,(2*params.ro))) * np.divide(np.pi,(2*params.ro))
-                        + params.D * np.sin(t) * np.cos(np.divide(np.pi*r,(2*params.ro))) * (np.divide(np.pi,(2*params.ro)))**2
-                        + params.k * C_exact_MMS(r,t))
+    
+    params.S = lambda r,t : dC_MMS_t(r,t) - (D/r)*dC_MMS_r(r,t) - D*ddC_MMS_r(r,t) + k*C_MMS(r,t)
+    
+    #Solution_ordre_1 = solve.solveur_transitoire(params, consommation_constante=False, ordre_derive_premiere=1)
+    #C_exact_MMS = lambda r,t: np.sin(t)*np.cos(np.pi * np.divide(r, params.ro))+params.C_ext 
+    dom_analytique = np.linspace(0, params.ro, 100) 
+
+    # Évaluer C_MMS sur le domaine numérique
+    C_exact_domaine_MMS = C_MMS(dom_analytique,t_sim)
+    plt.plot(dom_analytique,C_exact_domaine_MMS,label="Analytique")
+    plt.show()
+    # params.S = lambda r,t: (np.cos(t) * np.cos(np.divide(np.pi*r,(2*params.ro))) 
+                        # + np.divide(params.D,r) * np.sin(t) * np.sin(np.divide(np.pi*r,(2*params.ro))) * np.divide(np.pi,(2*params.ro))
+                        # + params.D * np.sin(t) * np.cos(np.divide(np.pi*r,(2*params.ro))) * (np.divide(np.pi,(2*params.ro)))**2
+                        # + params.k * C_exact_MMS(r,t))
     #Solution_ordre_2 = solve.solveur_transitoire(params, consommation_constante=False, ordre_derive_premiere=2)
     Solution_MMS = solve.solveur_MMS(params, consommation_constante=False, ordre_derive_premiere=2)
     

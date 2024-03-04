@@ -1,5 +1,6 @@
 import numpy as np; np.set_printoptions(precision=2, linewidth=150) # permet d'imprimer les arrays de manière plus compacte pr les inspecter 
-
+import sympy as sp
+import math as math
 """
 Fichier regroupant les méthodes numériques 
 """
@@ -190,7 +191,7 @@ def solveur_MMS(data:object, consommation_constante:bool, ordre_derive_premiere:
         # n'intervien plus
     else: 
         coeff_droite = lambda Ci_t,r,t: -np.true_divide(Ci_t, dt) - S(r,t)
-        beta = beta_ 
+        beta = lambda ri: beta_(ri)-k 
 
     ### conditions initiales 
     C = np.zeros(N) 
