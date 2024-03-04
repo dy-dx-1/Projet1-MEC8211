@@ -11,12 +11,15 @@ import math as math
 class Data:  
     ro = 0.5  # Diamètre du cylindre [m]
     D = 10**(-10) # coeff diffusion effective 
-    S = 8*(10**(-9)) # terme source si constant 
     k = 4*(10**(-9)) # constante de réaction si réaction du premier ordre 
     C_ext = 12 # Concentration à l'extérieur 
+    S = lambda r,t: 0 # Terme source permettant de vérifier la solution avec la MMS 
 
     N = 5
     domaine = np.linspace(0, ro, N)
+
+    nb_annees = 100 # Durée de la simulation transitoire en années 
+    t_sim = int(nb_annees*365.25*24*60*60) # temps de simulation en secondes
 
 def Devoir1(): 
     params = Data() 
@@ -69,43 +72,31 @@ def Devoir1():
     return None 
 
 def Devoir2():
+    ### Paramètres de la simulation
     params = Data() 
-    #Tracer la solution avec S non constant et ordre 2
-    nb_annees = 100
-    nb_jours = nb_annees*365.25
-    t_sim = int(nb_jours*24*60*60) # temps de simulation
+    t_sim = params.t_sim
+    C_ext = params.C_ext
+    R = params.ro
+    D = params.D
+    k = params.k
     
-    #2eme MMS
-    C_ext=params.C_ext
-    R=params.ro
-    D=params.D
-    k=params.k
+    ### Setup de la solution manufacturée 
+    r = sp.symbols("r") 
+    t = sp.symbols("t") 
+    C_MMS = C_ext + (t * (1 - ((r/R)**2)) * sp.cos(r) / t_sim)
+    dC_MMS_r = sp.diff(C_MMS, r) 
+    ddC_MMS_r = sp.diff(dC_MMS_r, r)
+    dC_MMS_t = sp.diff(C_MMS, t)
+    # Nouveau terme source pour accomoder C_MMS   
+    params.S = sp.lambdify([r, t], dC_MMS_t - ((D/r)*dC_MMS_r) - (D*ddC_MMS_r) + (k*C_MMS), 'numpy')
     
-    C_MMS = lambda r, t: C_ext + t * (1 - r**2 / (R**2)) * np.cos(r) / t_sim
-    dC_MMS_r = lambda r, t: (t / t_sim) * (-2 * r * np.cos(r) / R**2 - (1 - ((r / R)**2)) * np.sin(r))
-    ddC_MMS_r = lambda r, t:(t / t_sim) * (-2 * (1 / R**2 * np.cos(r) - r / R**2 * np.sin(r)) - np.cos(r) * (1 - r**2 / R**2) + np.sin(r) * (2 * r / R**2))
-    dC_MMS_t = lambda r, t: (1 - r**2 / (R**2)) * np.cos(r) / t_sim
-
+    ### Évaluation de la MMS et visualisation 
+    dom_analytique = np.linspace(0, params.ro, 100)
+    C_exact_domaine_MMS = sp.lambdify([r,t], C_MMS, 'numpy')(dom_analytique, t_sim)
+    # Solution de la MMS avec notre solveur 
+    Solution_MMS = solve.solveur_transitoire(params, ordre_derive_premiere=2)
     
-    params.S = lambda r,t : dC_MMS_t(r,t) - (D/r)*dC_MMS_r(r,t) - D*ddC_MMS_r(r,t) + k*C_MMS(r,t)
-    
-    #Solution_ordre_1 = solve.solveur_transitoire(params, consommation_constante=False, ordre_derive_premiere=1)
-    #C_exact_MMS = lambda r,t: np.sin(t)*np.cos(np.pi * np.divide(r, params.ro))+params.C_ext 
-    dom_analytique = np.linspace(0, params.ro, 100) 
-
-    # Évaluer C_MMS sur le domaine numérique
-    C_exact_domaine_MMS = C_MMS(dom_analytique,t_sim)
-    plt.plot(dom_analytique,C_exact_domaine_MMS,label="Analytique")
-    plt.show()
-    # params.S = lambda r,t: (np.cos(t) * np.cos(np.divide(np.pi*r,(2*params.ro))) 
-                        # + np.divide(params.D,r) * np.sin(t) * np.sin(np.divide(np.pi*r,(2*params.ro))) * np.divide(np.pi,(2*params.ro))
-                        # + params.D * np.sin(t) * np.cos(np.divide(np.pi*r,(2*params.ro))) * (np.divide(np.pi,(2*params.ro)))**2
-                        # + params.k * C_exact_MMS(r,t))
-    #Solution_ordre_2 = solve.solveur_transitoire(params, consommation_constante=False, ordre_derive_premiere=2)
-    Solution_MMS = solve.solveur_MMS(params, consommation_constante=False, ordre_derive_premiere=2)
-    
-    #plt.plot(params.domaine,Solution_ordre_1,label="ordre 1")
-    print(Solution_MMS)
+    print(f"{Solution_MMS=}")
     plt.plot(dom_analytique,C_exact_domaine_MMS,label="Analytique")
     plt.plot(params.domaine,Solution_MMS,label="MMS")
     plt.legend()
