@@ -213,10 +213,10 @@ def solveur_MMS(data:object, consommation_constante:bool, ordre_derive_premiere:
         A[0, 0] = -3 
         A[0, 1] = 4
         A[0, 2] = -1 
-        B[0, 0] = 0 
+        B[0, 0] = 0
         ## Dirichlet 
-        A[N-1, N-1] = 1 
-        B[N-1, 0] = C_ext 
+        A[-1, -1] = 1 
+        B[-1, 0] = C_ext 
         
         ### Solution du système 
         C_new = np.linalg.solve(A, B) # nouvelles valeurs donc on peut passer à la prochaine itération 

@@ -15,7 +15,7 @@ class Data:
     k = 4*(10**(-9)) # constante de réaction si réaction du premier ordre 
     C_ext = 12 # Concentration à l'extérieur 
 
-    N = 15
+    N = 5
     domaine = np.linspace(0, ro, N)
 
 def main(): 
@@ -85,11 +85,10 @@ def main():
     D=params.D
     k=params.k
     
-    C_MMS = lambda r, t: C_ext - t * (1-r**2 / (R**2)) * np.sin(r) / t_sim
-    dC_MMS_dr = lambda r, t: -t / t_sim * np.cos(r) + 2 * t * r / (t_sim * R**2) * np.sin(r) + t / t_sim * r**2 / (R**2) * np.cos(r)
-    ddC_MMS_dr2 = lambda r, t: t / t_sim * np.sin(r) - t * r**2 / (t_sim * R**2) * np.sin(r) + 2 * t / (t_sim * R**2) * np.cos(r)
-    dC_MMS_dt = lambda r, t: (1 - r**2 / (R**2)) * np.sin(r) / t_sim
-
+    C_MMS = lambda r, t: C_ext - t * (1 - r**2 / (R**2)) * np.sin(r+math.pi/2) / t_sim
+    dC_MMS_dr = lambda r, t: -(t / t_sim) * (-2 * r * np.cos(r) / R**2 - (1 - ((r / R)**2)) * np.sin(r))
+    ddC_MMS_dr2 = lambda r, t: -(t / t_sim) * (-2 * (1 / R**2 * np.cos(r) - r / R**2 * np.sin(r)) - np.cos(r) * (1 - r**2 / R**2) + np.sin(r) * (2 * r / R**2))
+    dC_MMS_dt = lambda r, t: -(1 - r**2 / (R**2)) * np.cos(r) / t_sim
     
     params.S = lambda r,t : dC_MMS_dt(r,t) - (D/r)*dC_MMS_dr(r,t) - D*ddC_MMS_dr2(r,t) + k*C_MMS(r,t)
     
