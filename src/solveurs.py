@@ -69,7 +69,7 @@ def solveur_stationnaire(data:object, consommation_constante:bool, ordre_derive_
     C = np.linalg.solve(A, B)[:,0] # Retour sous la forme [C0, C1, ..., CN]
     return C
 
-def solveur_transitoire(data:object, ordre_derive_premiere:int): 
+def solveur_transitoire(data:object, ordre_derive_premiere:int, dt=1e5): 
     """
     Résout la diffusion dans le pilier dans le régime transitoire à l'aide d'un schéma Euler implicite. 
     
@@ -77,6 +77,7 @@ def solveur_transitoire(data:object, ordre_derive_premiere:int):
     ----------
     data: objet contenant les paramètres de simulation 
     ordre_derive_premiere: Ordre de la discrétisation spatiale des dérivées premieres qui ne sont pas au bord
+    dt: pas de temps, modifier pour études de convergence temporelles 
     
     Returns
     ----------
@@ -86,7 +87,6 @@ def solveur_transitoire(data:object, ordre_derive_premiere:int):
     ro, D, S, k, C_ext, N, domaine, t_sim = data.ro, data.D, data.S, data.k, data.C_ext, data.N, data.domaine, data.t_sim
     dr = ro/(N-1)   # pas de discrétisation spatiale 
 
-    dt = 1e5
     t = 0 # temps initial 
     print(f"Simulation transitoire lancée avec {N=}noeuds ; {dt=}s ; pendant {data.nb_annees=} annees")
 

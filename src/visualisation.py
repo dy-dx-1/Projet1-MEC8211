@@ -28,6 +28,20 @@ def generate_n_graphs(params:object, solver_function, n_values:list)->list:
         graphiques.append((params.domaine, profil_S_constant, f"Numérique, N = {params.N}", ".-"))
     return graphiques 
 
+def generate_dt_graphs(params:object, solver_function, dt_values:list)->list:
+    """ 
+    Équivalent de generate_n_graphs mais fait varier dt 
+ 
+    Returns 
+    ----------
+    liste de tuples sous format [(domaine, image, label)]
+    """
+    graphiques = [] 
+    for dt in dt_values:  # génération de résultats pour différents types de noeuds
+        profil_S_constant = solver_function(dt) 
+        graphiques.append((params.domaine, profil_S_constant, f"Numérique, dt = {dt}", ".-"))
+    return graphiques 
+
 def show_graphs(title:str, xaxis:str, yaxis:str, value_pairs:list):
     """
     Fonction permettant de générer et formatter facilement plusieurs graphiques avec des axes standard.

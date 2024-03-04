@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np 
 import solveurs as solve 
-from erreurs import erreur_L1, erreur_L2, erreur_Linf,erreur_de_convergence_observe
-from visualisation import show_graphs, graphique_erreur, generate_n_graphs
+from erreurs import erreur_L1, erreur_L2, erreur_Linf,erreur_de_convergence_observe, erreur_de_convergence_observe_temps
+from visualisation import show_graphs, graphique_erreur, generate_n_graphs, generate_dt_graphs
 import matplotlib.pyplot as plt
 import sympy as sp
 import math as math
@@ -90,23 +90,15 @@ def Devoir2():
     # Nouveau terme source pour accomoder C_MMS   
     params.S = sp.lambdify([r, t], dC_MMS_t - ((D/r)*dC_MMS_r) - (D*ddC_MMS_r) + (k*C_MMS), 'numpy')
     
-    ### Évaluation de la MMS et visualisation initiale 
+    ### Évaluation de la MMS 
     dom_analytique = np.linspace(0, params.ro, 100)
     C_exact_MMS_eval = sp.lambdify([r,t], C_MMS, 'numpy') # permet d'evaluer la solution exacte de la MMS 
     C_exact_domaine_MMS = C_exact_MMS_eval(dom_analytique, t_sim)
-    # Solution de la MMS avec notre solveur 
-    """
-    Solution_MMS = solve.solveur_transitoire(params, ordre_derive_premiere=2)
-    
-    plt.plot(dom_analytique,C_exact_domaine_MMS,label="Analytique")
-    plt.plot(params.domaine,Solution_MMS,label="MMS avec 5 noeuds")
-    plt.legend()
-    plt.show()
-    """
 
     ### Graphiques d'erreur 
     ##  Rafinement spatial, t fixe à t_sim
-    # Visualisation du profil de concentration 
+    """
+    # Visualisation du profil de concentration avec différents noeuds
     n_vals = [4, 8, 16, 20, 25]
     graphiques_multi_n = generate_n_graphs(params, lambda: solve.solveur_transitoire(params, ordre_derive_premiere=2), n_values=n_vals)
     graphiques_multi_n.append((dom_analytique, C_exact_domaine_MMS, "Analytique avec N = 100", "-")) 
@@ -116,8 +108,21 @@ def Devoir2():
     Erreurs_L1 = [erreur_L1(graphiques_multi_n[i][0],graphiques_multi_n[i][1],C_exact_MMS_eval(graphiques_multi_n[i][0], t_sim)) for i in range(len(n_vals))] 
     Erreurs_L2 = [erreur_L2(graphiques_multi_n[i][0],graphiques_multi_n[i][1],C_exact_MMS_eval(graphiques_multi_n[i][0], t_sim)) for i in range(len(n_vals))] 
     Erreurs_Linf = [erreur_Linf(graphiques_multi_n[i][0],graphiques_multi_n[i][1],C_exact_MMS_eval(graphiques_multi_n[i][0], t_sim)) for i in range(len(n_vals))] 
-    graphique_erreur("ordre 2",n_vals,[Erreurs_L1,Erreurs_L2,Erreurs_Linf]) 
+    graphique_erreur("Ordre 2",n_vals,[Erreurs_L1,Erreurs_L2,Erreurs_Linf]) 
     erreur_de_convergence_observe(params,n_vals,Erreurs_L1,Erreurs_L2,Erreurs_Linf)
+    """ 
+    ## Rafinement temporel, t fixe à t_sim et n fixe à 15 noeuds 
+    dom_analytique = np.linspace(0, params.ro, 15)
+    C_exact_domaine_MMS = C_exact_MMS_eval(dom_analytique, t_sim)
+    dts = [1e5, 1e4, 8e3, 5e3]
+    graphiques_multi_dt = generate_dt_graphs(params, lambda dt_: solve.solveur_transitoire(params, ordre_derive_premiere=2, dt = dt_), dts)
+    graphiques_multi_dt.append((dom_analytique, C_exact_domaine_MMS, "Analytique avec N = 15", "-")) 
+    show_graphs("Profil obtenu numériquement et analytiquement avec la MMS en variant le pas de temps avec N=15", "Position radiale [m]", r"Concentration [mol/$m^3$]",
+                graphiques_multi_dt)
+    Erreurs_L1 = [erreur_L1(graphiques_multi_dt[i][0],graphiques_multi_dt[i][1],C_exact_MMS_eval(graphiques_multi_dt[i][0], t_sim)) for i in range(len(dts))] 
+    Erreurs_L2 = [erreur_L2(graphiques_multi_dt[i][0],graphiques_multi_dt[i][1],C_exact_MMS_eval(graphiques_multi_dt[i][0], t_sim)) for i in range(len(dts))] 
+    Erreurs_Linf = [erreur_Linf(graphiques_multi_dt[i][0],graphiques_multi_dt[i][1],C_exact_MMS_eval(graphiques_multi_dt[i][0], t_sim)) for i in range(len(dts))] 
+    erreur_de_convergence_observe_temps(dts,Erreurs_L1,Erreurs_L2,Erreurs_Linf)
     return 
 
 def main(): 
