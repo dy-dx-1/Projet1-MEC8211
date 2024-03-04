@@ -97,7 +97,7 @@ def Devoir2():
 
     ### Graphiques d'erreur 
     ##  Rafinement spatial, t fixe à t_sim
-    """
+    """ Commenté pour calculs temporels!!! 
     # Visualisation du profil de concentration avec différents noeuds
     n_vals = [4, 8, 16, 20, 25]
     graphiques_multi_n = generate_n_graphs(params, lambda: solve.solveur_transitoire(params, ordre_derive_premiere=2), n_values=n_vals)
