@@ -83,7 +83,7 @@ def Devoir2():
     ### Setup de la solution manufacturée 
     r = sp.symbols("r") 
     t = sp.symbols("t") 
-    C_MMS = C_ext - (t * (1 - ((r/R)**2)) * sp.sin(r+(np.pi/2)) / t_sim)
+    C_MMS = C_ext - sp.exp(-t/ t_sim) *((1 - ((r/R)**2)) * sp.sin(r+(np.pi/2))) 
     dC_MMS_r = sp.diff(C_MMS, r) 
     ddC_MMS_r = sp.diff(dC_MMS_r, r)
     dC_MMS_t = sp.diff(C_MMS, t)
