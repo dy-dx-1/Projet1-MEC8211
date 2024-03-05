@@ -1,11 +1,12 @@
-# -*- coding: utf-8 -*-
 import numpy as np 
 import solveurs as solve 
-from erreurs import erreur_L1, erreur_L2, erreur_Linf,erreur_de_convergence_observe, erreur_de_convergence_observe_temps
-from visualisation import show_graphs, graphique_erreur, generate_n_graphs, generate_dt_graphs
-import matplotlib.pyplot as plt
+import erreurs as err
+import visualisation as vis
 import sympy as sp
 import math as math
+
+# -*- coding: utf-8 -*-
+import matplotlib.pyplot as plt
 
 ### Définition du problème 
 class Data:  
@@ -34,42 +35,99 @@ def Devoir1():
     profil_S_constant_trans = solve.solveur_transitoire(params, consommation_constante=True, ordre_derive_premiere=1)
     profil_S_ordre1_trans = solve.solveur_transitoire(params, consommation_constante=False, ordre_derive_premiere=1)
     graphiques_D = [(params.domaine, profil_S_constant_trans, r"$S=8*10^{-9}$", ".-"), (params.domaine, profil_S_ordre1_trans, r"$S=k*C$", ".-")]
-    show_graphs(f"Profil de concentration transitoire après 10 ans selon le type de source", "Position radiale [m]", r"Concentration [mol/$m^3$]", graphiques_D)
+    vis.show_graphs(f"Profil de concentration transitoire après 10 ans selon le type de source", "Position radiale [m]", r"Concentration [mol/$m^3$]", graphiques_D)
     ### Question E: Comparaison entre sol stationnaire S constant et analytique, avec derive_premiere d'ordre 1
     cas_a_resoudre = lambda: solve.solveur_stationnaire(params, consommation_constante=True, ordre_derive_premiere=1)
-    graphiques_E = generate_n_graphs(params, cas_a_resoudre, n_values)
+    graphiques_E = vis.generate_n_graphs(params, cas_a_resoudre, n_values)
     graphiques_E.append((dom_analytique, C_exact_domaine, "Analytique avec N = 100", "-")) 
-    show_graphs("Profil obtenu numériquement et analytiquement pour une source constante et approx dérivée première ordre 1", "Position radiale [m]", r"Concentration [mol/$m^3$]",
+    vis.show_graphs("Profil obtenu numériquement et analytiquement pour une source constante et approx dérivée première ordre 1", "Position radiale [m]", r"Concentration [mol/$m^3$]",
              graphiques_E)
     ### Question E)b): Sur un même graphique les erreurs L1, L2 et L∞. 
     Erreur_L1=[]
     Erreur_L2=[]
     Erreur_Linf=[]
     for i in range(len(n_values)):
-        Erreur_L1.append(erreur_L1(graphiques_E[i][0],graphiques_E[i][1],C_exact(graphiques_E[i][0])))
-        Erreur_L2.append(erreur_L2(graphiques_E[i][0],graphiques_E[i][1],C_exact(graphiques_E[i][0])))
-        Erreur_Linf.append(erreur_Linf(graphiques_E[i][0],graphiques_E[i][1],C_exact(graphiques_E[i][0])))
+        Erreur_L1.append(err.erreur_L1(graphiques_E[i][0],graphiques_E[i][1],C_exact(graphiques_E[i][0])))
+        Erreur_L2.append(err.erreur_L2(graphiques_E[i][0],graphiques_E[i][1],C_exact(graphiques_E[i][0])))
+        Erreur_Linf.append(err.erreur_Linf(graphiques_E[i][0],graphiques_E[i][1],C_exact(graphiques_E[i][0])))
        
-    graphique_erreur("ordre 1",n_values,[Erreur_L1,Erreur_L2,Erreur_Linf])
-    erreur_de_convergence_observe(params,n_values,Erreur_L1,Erreur_L2,Erreur_Linf)
+    vis.graphique_erreur("ordre 1",n_values,[Erreur_L1,Erreur_L2,Erreur_Linf])
+    err.erreur_de_convergence_observe(params,n_values,Erreur_L1,Erreur_L2,Erreur_Linf)
     # Valeurs exactes ne changent évidamment pas 
     cas_a_resoudre = lambda: solve.solveur_stationnaire(params, consommation_constante=True, ordre_derive_premiere=2)
-    graphiques_D = generate_n_graphs(params, cas_a_resoudre, n_values)
+    graphiques_D = vis.generate_n_graphs(params, cas_a_resoudre, n_values)
     graphiques_D.append((dom_analytique, C_exact_domaine, "Analytique avec N = 100", "-")) 
-    show_graphs("Profil obtenu numériquement et analytiquement pour une source constante et approx dérivée première ordre 2", "Position radiale [m]", r"Concentration [mol/$m^3$]",
+    vis.show_graphs("Profil obtenu numériquement et analytiquement pour une source constante et approx dérivée première ordre 2", "Position radiale [m]", r"Concentration [mol/$m^3$]",
              graphiques_D)
     # Question F)a)
     Erreur_L1=[]
     Erreur_L2=[]
     Erreur_Linf=[]
     for i in range(len(n_values)):
-        Erreur_L1.append(erreur_L1(graphiques_D[i][0],graphiques_D[i][1],C_exact(graphiques_D[i][0])))
-        Erreur_L2.append(erreur_L2(graphiques_D[i][0],graphiques_D[i][1],C_exact(graphiques_D[i][0])))
-        Erreur_Linf.append(erreur_Linf(graphiques_D[i][0],graphiques_D[i][1],C_exact(graphiques_D[i][0])))
+        Erreur_L1.append(err.erreur_L1(graphiques_D[i][0],graphiques_D[i][1],C_exact(graphiques_D[i][0])))
+        Erreur_L2.append(err.erreur_L2(graphiques_D[i][0],graphiques_D[i][1],C_exact(graphiques_D[i][0])))
+        Erreur_Linf.append(err.erreur_Linf(graphiques_D[i][0],graphiques_D[i][1],C_exact(graphiques_D[i][0])))
       
-    #graphique_erreur("ordre 2",n_values,[Erreur_L1,Erreur_L2,Erreur_Linf]) 
-    #erreur_de_convergence_observe(params,n_values,Erreur_L1,Erreur_L2,Erreur_Linf)
+    #vis.graphique_erreur("ordre 2",n_values,[Erreur_L1,Erreur_L2,Erreur_Linf]) 
+    #err.erreur_de_convergence_observe(params,n_values,Erreur_L1,Erreur_L2,Erreur_Linf)
     return None 
+
+def Analyse_MMS_spatiale(params, C_exact_MMS_eval, t_sim): 
+    """
+    Analyse de convergence sur le domaine spatial avec la MMS. 
+    params: Objet contenant les données de la simulation 
+    C_exact_MMS_eval: Lambda retournant la valeur exacte de concentration pour la MMS  
+    t_sim: temps total de simulation transitoire 
+    """
+    ## Préparation MMS
+    dom_analytique = np.linspace(0, params.ro, 100)
+    C_exact_domaine_MMS = C_exact_MMS_eval(dom_analytique, t_sim)
+    ## Visualisation du profil de concentration avec différents noeuds
+    n_vals = [4, 5, 10, 20, 25, 30, 40]
+    drs=[params.ro/(n-1) for n in n_vals] # valeurs de dr correspondant aux différents noeuds 
+    # Simulations numériques MMS, n variable
+    graphiques_multi_n = vis.generate_n_graphs(params, lambda: solve.solveur_transitoire(params, ordre_derive_premiere=2), n_values=n_vals)
+    # Solution exacte MMS 
+    graphiques_multi_n.append((dom_analytique, C_exact_domaine_MMS, "Analytique avec N = 100", "-")) 
+    # Plotting sol num et exacte 
+    vis.show_graphs("Profil obtenu numériquement et analytiquement avec la MMS en variant le nb de noeuds", "Position radiale [m]", r"Concentration [mol/$m^3$]",
+                graphiques_multi_n)
+    # Calcul des erreurs 
+    Erreurs_L1 = [err.erreur_L1(graphiques_multi_n[i][0],graphiques_multi_n[i][1],C_exact_MMS_eval(graphiques_multi_n[i][0], t_sim)) for i in range(len(n_vals))] 
+    Erreurs_L2 = [err.erreur_L2(graphiques_multi_n[i][0],graphiques_multi_n[i][1],C_exact_MMS_eval(graphiques_multi_n[i][0], t_sim)) for i in range(len(n_vals))] 
+    Erreurs_Linf = [err.erreur_Linf(graphiques_multi_n[i][0],graphiques_multi_n[i][1],C_exact_MMS_eval(graphiques_multi_n[i][0], t_sim)) for i in range(len(n_vals))] 
+    ## Calcul de l'ordre de convergence et affichage 
+    vis.graphique_convergence_erreurs(drs, [Erreurs_L1, Erreurs_L2, Erreurs_Linf], 'dr') 
+    return 
+
+def Analyse_MMS_temporelle(params, C_exact_MMS_eval, t_sim): 
+    """
+    Analyse de convergence sur le domaine temporel avec la MMS. 
+    params: Objet contenant les données de la simulation 
+    C_exact_MMS_eval: Lambda retournant la valeur exacte de concentration pour la MMS  
+    t_sim: temps total de simulation transitoire 
+    """
+    ## Params généraux pour les simulations en temps
+    params.N = 15 
+    params.domaine = np.linspace(0, params.ro, params.N)
+    dts = [1.5e9, 1e9, 1.5e8, 1e8, 1.5e7, 1e7, 1.5e6, 1e6, 1.5e5, 1e5, 1.5e4, 1e4]
+    ## Préparation MMS 
+    dom_analytique = np.linspace(0, params.ro, params.N)
+    C_exact_domaine_MMS = C_exact_MMS_eval(dom_analytique, t_sim)
+    # Simulations numériques de la MMS en changeant le pas de temps 
+    graphiques_multi_dt = vis.generate_dt_graphs(params, lambda dt_: solve.solveur_transitoire(params, ordre_derive_premiere=2, dt = dt_), dt_values=dts)
+    # Solution exacte MMS
+    graphiques_multi_dt.append((dom_analytique, C_exact_domaine_MMS, f"Analytique avec N = {params.N}", "-")) 
+    ## Visualisation résultats MMS selon le pas de temps 
+    vis.show_graphs(f"Profil obtenu numériquement et analytiquement avec la MMS en variant le pas de temps avec N={params.N}", "Position radiale [m]", r"Concentration [mol/$m^3$]",
+                graphiques_multi_dt)
+    # Calcul des erreurs 
+    Erreurs_L1 = [err.erreur_L1(graphiques_multi_dt[i][0],graphiques_multi_dt[i][1],C_exact_MMS_eval(graphiques_multi_dt[i][0], t_sim)) for i in range(len(dts))] 
+    Erreurs_L2 = [err.erreur_L2(graphiques_multi_dt[i][0],graphiques_multi_dt[i][1],C_exact_MMS_eval(graphiques_multi_dt[i][0], t_sim)) for i in range(len(dts))] 
+    Erreurs_Linf = [err.erreur_Linf(graphiques_multi_dt[i][0],graphiques_multi_dt[i][1],C_exact_MMS_eval(graphiques_multi_dt[i][0], t_sim)) for i in range(len(dts))] 
+    ## Calcul de l'ordre de convergence et affichage 
+    vis.graphique_convergence_erreurs(dts, [Erreurs_L1, Erreurs_L2, Erreurs_Linf], 'dt')
+    return
 
 def Devoir2():
     ### Paramètres de la simulation
@@ -89,40 +147,12 @@ def Devoir2():
     dC_MMS_t = sp.diff(C_MMS, t)
     # Nouveau terme source pour accomoder C_MMS   
     params.S = sp.lambdify([r, t], dC_MMS_t - ((D/r)*dC_MMS_r) - (D*ddC_MMS_r) + (k*C_MMS), 'numpy')
-    
-    ### Évaluation de la MMS 
-    dom_analytique = np.linspace(0, params.ro, 100)
     C_exact_MMS_eval = sp.lambdify([r,t], C_MMS, 'numpy') # permet d'evaluer la solution exacte de la MMS 
-    C_exact_domaine_MMS = C_exact_MMS_eval(dom_analytique, t_sim)
-
     ### Graphiques d'erreur 
     ##  Rafinement spatial, t fixe à t_sim
-    """ Commenté pour calculs temporels!!! 
-    # Visualisation du profil de concentration avec différents noeuds
-    n_vals = [4, 8, 16, 20, 25]
-    graphiques_multi_n = generate_n_graphs(params, lambda: solve.solveur_transitoire(params, ordre_derive_premiere=2), n_values=n_vals)
-    graphiques_multi_n.append((dom_analytique, C_exact_domaine_MMS, "Analytique avec N = 100", "-")) 
-    show_graphs("Profil obtenu numériquement et analytiquement avec la MMS en variant le nb de noeuds", "Position radiale [m]", r"Concentration [mol/$m^3$]",
-                graphiques_multi_n)
-    # Calcul des erreurs 
-    Erreurs_L1 = [erreur_L1(graphiques_multi_n[i][0],graphiques_multi_n[i][1],C_exact_MMS_eval(graphiques_multi_n[i][0], t_sim)) for i in range(len(n_vals))] 
-    Erreurs_L2 = [erreur_L2(graphiques_multi_n[i][0],graphiques_multi_n[i][1],C_exact_MMS_eval(graphiques_multi_n[i][0], t_sim)) for i in range(len(n_vals))] 
-    Erreurs_Linf = [erreur_Linf(graphiques_multi_n[i][0],graphiques_multi_n[i][1],C_exact_MMS_eval(graphiques_multi_n[i][0], t_sim)) for i in range(len(n_vals))] 
-    graphique_erreur("Ordre 2",n_vals,[Erreurs_L1,Erreurs_L2,Erreurs_Linf]) 
-    erreur_de_convergence_observe(params,n_vals,Erreurs_L1,Erreurs_L2,Erreurs_Linf)
-    """ 
+    Analyse_MMS_spatiale(params, C_exact_MMS_eval, t_sim) 
     ## Rafinement temporel, t fixe à t_sim et n fixe à 15 noeuds 
-    dom_analytique = np.linspace(0, params.ro, 15)
-    C_exact_domaine_MMS = C_exact_MMS_eval(dom_analytique, t_sim)
-    dts = [1e5, 1e4, 8e3, 5e3]
-    graphiques_multi_dt = generate_dt_graphs(params, lambda dt_: solve.solveur_transitoire(params, ordre_derive_premiere=2, dt = dt_), dts)
-    graphiques_multi_dt.append((dom_analytique, C_exact_domaine_MMS, "Analytique avec N = 15", "-")) 
-    show_graphs("Profil obtenu numériquement et analytiquement avec la MMS en variant le pas de temps avec N=15", "Position radiale [m]", r"Concentration [mol/$m^3$]",
-                graphiques_multi_dt)
-    Erreurs_L1 = [erreur_L1(graphiques_multi_dt[i][0],graphiques_multi_dt[i][1],C_exact_MMS_eval(graphiques_multi_dt[i][0], t_sim)) for i in range(len(dts))] 
-    Erreurs_L2 = [erreur_L2(graphiques_multi_dt[i][0],graphiques_multi_dt[i][1],C_exact_MMS_eval(graphiques_multi_dt[i][0], t_sim)) for i in range(len(dts))] 
-    Erreurs_Linf = [erreur_Linf(graphiques_multi_dt[i][0],graphiques_multi_dt[i][1],C_exact_MMS_eval(graphiques_multi_dt[i][0], t_sim)) for i in range(len(dts))] 
-    erreur_de_convergence_observe_temps(dts,Erreurs_L1,Erreurs_L2,Erreurs_Linf)
+    Analyse_MMS_temporelle(params, C_exact_MMS_eval, t_sim) 
     return 
 
 def main(): 
@@ -130,4 +160,4 @@ def main():
     return 
 
 if __name__=="__main__": 
-    main() 
+    main()
