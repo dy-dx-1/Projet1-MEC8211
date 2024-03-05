@@ -69,7 +69,7 @@ def solveur_stationnaire(data:object, consommation_constante:bool, ordre_derive_
     C = np.linalg.solve(A, B)[:,0] # Retour sous la forme [C0, C1, ..., CN]
     return C
 
-def solveur_transitoire(data:object, ordre_derive_premiere:int, dt=1e5): 
+def solveur_transitoire(data:object, ordre_derive_premiere:int, dt=1e4): 
     """
     Résout la diffusion dans le pilier dans le régime transitoire à l'aide d'un schéma Euler implicite. 
     
