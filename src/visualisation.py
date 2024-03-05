@@ -92,8 +92,6 @@ def graphique_convergence_erreurs(delta_vals:list, erreurs:list, type_delta:str)
     print(f"***Ordre de convergence {'SPATIAL' if type_delta=='dr' else 'TEMPOREL'} observé***")
     for i, erreur in enumerate(erreurs): 
         j = 'inf' if i==2 else str(i+1) 
-        print(f"{delta_vals[-3:] = }")
-        print(f"{erreur[-3:] = }")
         coeffs = np.polyfit(np.log(delta_vals[-3:]), np.log(erreur[-3:]), 1)
         ordre = coeffs[0] if j=='inf' else coeffs[0][0] 
         print(f"Erreur L{j} : {ordre:.4f}")

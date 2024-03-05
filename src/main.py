@@ -85,8 +85,9 @@ def Analyse_MMS_spatiale(params, C_exact_MMS_eval, t_sim):
     ## Visualisation du profil de concentration avec différents noeuds
     n_vals = [4, 5, 10, 20, 25, 30, 40]
     drs=[params.ro/(n-1) for n in n_vals] # valeurs de dr correspondant aux différents noeuds 
+    dt_impose = 1e4 # pas de temps fin pour tous les tests, à réduire si on veut plus de précision en échange d'augmenter le temps de calcul 
     # Simulations numériques MMS, n variable
-    graphiques_multi_n = vis.generate_n_graphs(params, lambda: solve.solveur_transitoire(params, ordre_derive_premiere=2), n_values=n_vals)
+    graphiques_multi_n = vis.generate_n_graphs(params, lambda: solve.solveur_transitoire(params, ordre_derive_premiere=2, dt=dt_impose), n_values=n_vals)
     # Solution exacte MMS 
     graphiques_multi_n.append((dom_analytique, C_exact_domaine_MMS, "Analytique avec N = 100", "-")) 
     # Plotting sol num et exacte 
@@ -108,9 +109,9 @@ def Analyse_MMS_temporelle(params, C_exact_MMS_eval, t_sim):
     t_sim: temps total de simulation transitoire 
     """
     ## Params généraux pour les simulations en temps
-    params.N = 15 
+    params.N = 30 
     params.domaine = np.linspace(0, params.ro, params.N)
-    dts = [1.5e9, 1e9, 1.5e8, 1e8, 1.5e7, 1e7, 1.5e6, 1e6, 1.5e5, 1e5, 1.5e4, 1e4]
+    dts = [1e9, 1e7, 2e6, 1e6, 5e5]
     ## Préparation MMS 
     dom_analytique = np.linspace(0, params.ro, params.N)
     C_exact_domaine_MMS = C_exact_MMS_eval(dom_analytique, t_sim)
