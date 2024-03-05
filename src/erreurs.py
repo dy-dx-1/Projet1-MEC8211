@@ -73,18 +73,3 @@ def erreur_Linf(domaine, results_numerique, results_analytique):
     """
     erreur = abs(results_numerique.T - results_analytique)[0] # car results numérique est sous forme colonne et analytique sous forme ligne 
     return max(erreur)
-
-def erreur_de_convergence_observe(params,n_values,Erreur_L1,Erreur_L2,Erreur_Linf):
-    x_dr=[params.ro/(n-1) for n in n_values]  # valeurs de dr 
-    print("Ordre de convergence observé")
-    print("Erreur L1 " + str(np.polyfit(np.log(x_dr[-3:]), np.log(Erreur_L1[-3:]), 1)[0]))
-    print("Erreur L2 " + str(np.polyfit(np.log(x_dr[-3:]), np.log(Erreur_L2[-3:]), 1)[0]))
-    print("Erreur Linf " + str(np.polyfit(np.log(x_dr[-3:]), np.log(Erreur_Linf[-3:]), 1)[0]))
-    ### Question F: Profils avec différentiation ordre 2 
-def erreur_de_convergence_observe_temps(dt_values,Erreur_L1,Erreur_L2,Erreur_Linf):
-    # dt_values: [ordre décroissant (du plus gros au plus fin)]
-    # Erreurs: [ordre match dt_values ]
-    print("Ordre de convergence observé")
-    print("Erreur L1 " + str(np.polyfit(np.log(dt_values[-3:]), np.log(Erreur_L1[-3:]), 1)[0]))
-    print("Erreur L2 " + str(np.polyfit(np.log(dt_values[-3:]), np.log(Erreur_L2[-3:]), 1)[0]))
-    print("Erreur Linf " + str(np.polyfit(np.log(dt_values[-3:]), np.log(Erreur_Linf[-3:]), 1)[0]))
