@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt 
+import matplotlib.gridspec as gr
 import numpy as np 
 
 """
@@ -28,6 +29,20 @@ def generate_n_graphs(params:object, solver_function, n_values:list)->list:
         graphiques.append((params.domaine, profil_S_constant, f"Numérique, N = {params.N}", ".-"))
     return graphiques 
 
+def generate_dt_graphs(params:object, solver_function, dt_values:list)->list:
+    """ 
+    Équivalent de generate_n_graphs mais fait varier dt 
+ 
+    Returns 
+    ----------
+    liste de tuples sous format [(domaine, image, label)]
+    """
+    graphiques = [] 
+    for dt in dt_values:  # génération de résultats pour différents types de noeuds
+        profil_S_constant = solver_function(dt) 
+        graphiques.append((params.domaine, profil_S_constant, f"Numérique, dt = {dt}", ".-"))
+    return graphiques 
+
 def show_graphs(title:str, xaxis:str, yaxis:str, value_pairs:list):
     """
     Fonction permettant de générer et formatter facilement plusieurs graphiques avec des axes standard.
@@ -48,7 +63,7 @@ def show_graphs(title:str, xaxis:str, yaxis:str, value_pairs:list):
         img = plot[1]
         text = plot[2]
         style = plot[3]
-        plt.plot(dom, img,  style, marker='o', label=text)
+        plt.plot(dom, img,  style, label=text)
     
     plt.grid(True)
     plt.xlabel(xaxis)
@@ -57,111 +72,50 @@ def show_graphs(title:str, xaxis:str, yaxis:str, value_pairs:list):
     plt.legend()
     plt.savefig(f'../results/{title.strip().lower().replace(" ", "")}', bbox_inches='tight')
     plt.show()
-
-def graphique_erreur(titre,x_values, y_values):
+        
+def graphique_convergence_erreurs(delta_vals:list, erreurs:list, type_delta:str):
     """
-    Affiche un graphique de l'évolution de l'erreur en fonction de dr.
+    Affiche un graphique de l'évolution de l'erreur en fonction de dt ou de dr.
 
     Parameters
-    ----------
-    titre : ordre de la soltuion
-        
-    x_values : list
-        Liste des valeurs de dr.
-    y_values : list of lists
+    ----------        
+    delta_vals : list
+        Liste des valeurs de dt ou dr.
+    erreurs : list of lists
         Liste des erreurs L1, L2, et Linf.
+    type_delta : 'dt' ou 'dr' 
 
     Returns
     -------
     None
     """
-    title='Evolution des erreurs L1, L2 et Linf en fonction de dr '+ titre
-    x_dr=[0.5/(x_values[i]-1) for i in range(len(x_values))]
-    plt.grid(True)
-    plt.yscale('log')
-    plt.xscale('log')
-    plt.xlabel('dr')
-    plt.ylabel('Erreurs')
-    plt.title(title)
+    print(f"***Ordre de convergence {'SPATIAL' if type_delta=='dr' else 'TEMPOREL'} observé***")
+    for i, erreur in enumerate(erreurs): 
+        j = 'inf' if i==2 else str(i+1) 
+        coeffs = np.polyfit(np.log(delta_vals[-3:]), np.log(erreur[-3:]), 1)
+        ordre = coeffs[0] if j=='inf' else coeffs[0][0] 
+        print(f"Erreur L{j} : {ordre:.4f}")
 
-    for i in range(3):
-        if i != 2:
-            plt.plot(x_dr, y_values[i],linestyle="-", marker='o', label=f'Erreur L{i+1}')
-        else:
-            plt.plot(x_dr, y_values[i],linestyle="-", marker='o', label='Erreur Linf')
-    
-    plt.legend()
-    plt.savefig(f'../results/{title.strip().lower().replace(" ", "")}', bbox_inches='tight')
-    plt.show()
-    
-    """
-    Code tiré du fichier de monsieur Vidal Graphique de convergence.py
-    """
-    
-    
-    # Ajuster une loi de puissance à toutes les valeurs (en utilisant np.polyfit avec logarithmes)
-    i=0
-    for error_values in y_values:
-        
-        if i != 2:
-           nom_erreur=f'L{i+1}'
-        else:
-           nom_erreur='$L_{inf}$'
-
-        coefficients = np.polyfit(np.log(x_dr[4:]), np.log(error_values[4:]), 1)
-        exponent = coefficients[0]
-    
-        # Fonction de régression en termes de logarithmes
-        fit_function_log = lambda x: exponent * x + coefficients[1]
-    
+        fit_function_log = lambda x: ordre * x + coeffs[1]
         # Fonction de régression en termes originaux
         fit_function = lambda x: np.exp(fit_function_log(np.log(x)))
-    
-        # Extrapoler la valeur prédite pour la dernière valeur de h_values
-        #extrapolated_value = fit_function(x_dr[-1])
-        
-        # Tracer le graphique en échelle log-log avec des points et la courbe de régression extrapolée
-        plt.figure(figsize=(8, 6))
-        plt.scatter(x_dr, error_values, marker='o', color='b', label='Données numériques obtenues')
-        plt.plot(x_dr, fit_function(x_dr), linestyle='--', color='r', label='Régression en loi de puissance')
-        # Ajouter des étiquettes et un titre au graphique
-        
-        
-        
-        title='Convergence de l\'erreur' + nom_erreur +' en fonction de $Δx $'+titre
-        
-        
-        plt.title(title,
-                  fontsize=14, fontweight='bold', y=1.02)  # Le paramètre y règle la position verticale du titre
-        
-        plt.xlabel('Taille de maille $Δr$ (cm)', fontsize=12, fontweight='bold') 
-        plt.ylabel('Erreur' + nom_erreur + ' (m/s)', fontsize=12, fontweight='bold')
-        
-        # Rendre les axes plus gras
-        plt.gca().spines['bottom'].set_linewidth(2)
-        plt.gca().spines['left'].set_linewidth(2)
-        plt.gca().spines['right'].set_linewidth(2)
-        plt.gca().spines['top'].set_linewidth(2)
-        
-        # Placer les marques de coche à l'intérieur et les rendre un peu plus longues
-        plt.tick_params(width=2, which='both', direction='in', top=True, right=True, length=6)
-        
-        # Afficher l'équation de la régression en loi de puissance
-        equation_text = nom_erreur + f'$= {np.exp(coefficients[1]):.4f} \\times Δx^{{{exponent:.4f}}}$'
-        equation_text_obj = plt.text(0.05, 0.05, equation_text, fontsize=12, transform=plt.gca().transAxes, color='k')
-        
-        # Déplacer la zone de texte
-        equation_text_obj.set_position((0.5, 0.4))
-        
-        
-        # Afficher le graphique
-        plt.xscale('log')
-        plt.yscale('log')
+        plt.scatter(delta_vals, erreur, marker='o', color='b', label=f"Erreur L{j} ; Ordre: {ordre:.4f}")
+        plt.plot(delta_vals, fit_function(delta_vals), linestyle='--', color='r', label='Régression en loi de puissance')
+       
+        plt.legend() 
         plt.grid(True)
-        plt.legend()
-        plt.savefig('../results/Erreur_de_Convergence_'+titre +'_'+ nom_erreur)
-        
-        plt.show()
-        i+=1
-        
-    
+        plt.yscale('log')
+        plt.xscale('log')
+        if type_delta=="dr":
+            plt.ylabel('Erreur ')
+            plt.xlabel('dr [m]')
+            plt.title(f"Convergence de l'erreur L{j} selon le pas spatial")
+        elif type_delta=="dt":
+            plt.ylabel('Erreur ')
+            plt.xlabel('dt [s]')
+            plt.title(f"Convergence de l'erreur L{j} selon le pas de temps")
+        else:
+            print("type delta in graphique_convergence_erreurs not valid")
+            return 
+        plt.savefig(f'../results/MMS_{str(type_delta).upper()}/mms_err_L{j}_{type_delta}')
+        plt.show()         
