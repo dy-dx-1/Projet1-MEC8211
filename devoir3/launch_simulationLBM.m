@@ -17,7 +17,7 @@
 seed=101;
 deltaP= 0.1 ; % pressure drop in Pa
 NX= 100 ;
-poro= 0.9 ;
+poro= YYYY ;
 mean_fiber_d= 12.5 ; % in microns
 std_d= 2.85 ; % in microns
 dx= 2e-6 ; % grid size in m
