@@ -14,10 +14,10 @@
 % 
 % NX: domain lateral size in grid cell
 
-seed=101;
+seed=0;
 deltaP= 0.1 ; % pressure drop in Pa
 NX= 100 ;
-poro= YYYY ;
+poro= 0.9024684436534358 ;
 mean_fiber_d= 12.5 ; % in microns
 std_d= 2.85 ; % in microns
 dx= 2e-6 ; % grid size in m
