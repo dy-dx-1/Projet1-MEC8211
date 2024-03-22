@@ -9,5 +9,7 @@ script_matlab="launch_simulationLBM.m"
 # Boucle pour parcourir les valeurs de poro
 while IFS= read -r poro_value; do
     # Remplacer la valeur de poro dans le script MATLAB et écrire dans le répertoire dédié
-    sed "s/poro= YYYY ;/poro= $poro_value ;/" "$script_matlab" 
+	echo "Exécution de MATLAB pour la valeur de poro : $poro_value"    
+	sed -i "s/poro= YYYY ;/poro= $poro_value ;/" "$script_matlab"
+    matlab -nodisplay -nodesktop -r "run('$script_matlab');exit;"
 done < "$file_poro_values"

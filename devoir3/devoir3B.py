@@ -15,10 +15,10 @@ def monte_carlo_uniform(n):
     points = np.random.uniform(low=0, high=1, size=[1,n])
     return points
 
-p_mont=monte_carlo_uniform(1000)
+p_mont=monte_carlo_uniform(100)
 min = moyenne - 5*ecart_type
 max = moyenne + 5*ecart_type
-lnspc = np.linspace(min, max, 1000)
+lnspc = np.linspace(min, max, 100)
 pdf = stats.norm.pdf(lnspc, moyenne, ecart_type)
 cdf = stats.norm.cdf(lnspc, moyenne, ecart_type)
 
@@ -43,7 +43,7 @@ plt.show()
 ppf=stats.norm.ppf(p_mont, loc=moyenne, scale=ecart_type)
 
 # Exporter ppf dans un fichier texte
-with open('valeur_poro.txt', 'w') as f:
+with open('valeurs_poro.txt', 'w') as f:
     for value in ppf[0]:
         value_str = str(value).replace(',', '.')  # Remplace la virgule par un point
         f.write(f"{value_str}\n")
@@ -51,3 +51,15 @@ with open('valeur_poro.txt', 'w') as f:
 
 
 print(ppf)
+
+#Post traitement
+
+# # Charger les données depuis le fichier .dat
+# data = np.loadtxt('poro_eff.dat')
+# print(data)
+# # Calculer la moyenne et l'écart type
+# moyenne = np.mean(data)
+# ecart_type = np.std(data)
+
+# print("Moyenne :", moyenne)
+# print("Écart type :", ecart_type)
