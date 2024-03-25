@@ -58,13 +58,22 @@ figure(2);clf;hold on;colormap(gray(2));image(2-reshape(SOLID,NX,NY)');
 quiver(1:NX,1:NY,ux,uy,1.5,'b');axis([0.5 NX+0.5 0.5 NY+0.5]);axis image;
 title(['Velocity field after ',num2str(t_),' time steps']);
 
-% Après avoir calculé la valeur de poro_eff
+% Après avoir calculé la valeur de poro_eff et k_in_micron2
 
 % Ouvrir un fichier pour l'écriture en mode append (ajout)
 fid = fopen('poro_eff.dat', 'a');
 
 % Écrire la valeur de poro_eff dans le fichier
 fprintf(fid, '%f\n', poro_eff);
+
+% Fermer le fichier
+fclose(fid);
+
+% Ouvrir un fichier pour l'écriture en mode append (ajout)
+fid = fopen('k_perma.dat', 'a');
+
+% Écrire la valeur de k_in_micron2 dans le fichier
+fprintf(fid, '%f\n', k_in_micron2);
 
 % Fermer le fichier
 fclose(fid);
