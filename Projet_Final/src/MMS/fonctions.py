@@ -1,6 +1,7 @@
 import numpy as np 
 import pytest
 
+
 np.set_printoptions(precision=2, linewidth=150) # permet d'imprimer les arrays de manière plus compacte pr les inspecter 
 
 def psi_exact(r:float, theta:float, params:object)->float:
@@ -15,7 +16,7 @@ def psi_exact(r:float, theta:float, params:object)->float:
     Sorties: 
     La valeur de la fonction de courant Psi [m^2/s]
     """ 
-    return params.u_inf * r * np.sin(theta)*(1-np.square(params.R/r))
+    return np.cos(2 * np.pi * r / params.R_ext) * np.sin(theta) * params.u_inf * params.R_ext * (1 - params.R**2 / r**2)
 
 def delpsi_delr_ref(r:float, theta:float, params:object)->float: 
     """ 
@@ -29,7 +30,8 @@ def delpsi_delr_ref(r:float, theta:float, params:object)->float:
     Sorties: 
     La valeur de la fonction de courant Psi dérivée par rapport à r [m/s]
     """
-    return params.u_inf*np.sin(theta)*(np.square(r)+np.square(params.R))/np.square(r)
+    return (-2 * np.pi / params.R_ext * np.sin(2 * np.pi * r / params.R_ext) * np.sin(theta) * params.u_inf* params.R_ext * (1 - params.R**2 / r**2)
+                      + 2 * np.cos(2 * np.pi * r / params.R_ext) * np.sin(theta) * params.u_inf * params.R_ext * (params.R**2 / r**3))
 
 def delpsi_deltheta_ref(r:float, theta:float, params:object)->float: 
     """ 
@@ -43,7 +45,7 @@ def delpsi_deltheta_ref(r:float, theta:float, params:object)->float:
     Sorties: 
     La valeur de la fonction de courant Psi dérivée par rapport à theta [m^2/s]  
     """
-    return params.u_inf*(np.square(r)-np.square(params.R))*np.cos(theta)/r 
+    return np.cos(2 * np.pi * r / params.R_ext) * np.cos(theta) * params.u_inf * params.R_ext * (1 - params.R**2 / r**2)
 
 def psi_ref_mesh(prm:object)->np.ndarray:
     """ 
@@ -193,7 +195,21 @@ def mdf(params:object)->'tuple[np.ndarray, np.ndarray, np.ndarray]':
     N = nx*ny 
     noeuds = np.zeros((N,N)) 
     # Vecteur résidu associé à la matrice des noeuds 
+    
+    R=params.R
+    R_ext=params.R_ext
+    U_infty=params.u_inf
     res = np.zeros(N)
+    L= lambda r, theta: (- (2 * np.pi / R_ext)**2 * np.cos(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (1 - R**2 / r**2)
+                      - 2 * np.pi / R_ext * np.sin(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (R**2 / r**3)
+                      - 2 * (2 * np.pi / R_ext)**2 * np.sin(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (R**2 / r**3)
+                      - 6 * np.cos(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (R**2 / r**4)
+                      + 1 / r
+                      - 2 * np.pi / R_ext * np.sin(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (1 - R**2 / r**2)
+                      + 2 * np.cos(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (R**2 / r**3)
+                      + 1 / r**2
+                      - np.cos(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (1 - R**2 / r**2))
+    
     # Itérons sur chacun des k afin de remplir la matrice des noeuds et du résidu 
     for k in range(N): 
         if k<=(nx-1): # Condition limite du haut ; Psik = 0 
@@ -216,6 +232,10 @@ def mdf(params:object)->'tuple[np.ndarray, np.ndarray, np.ndarray]':
             rk = maille_r[j, i]
             # Évaluons les coefficients des différents noeuds de T, soit Tk+nx, Tk-nx, Tk+1, Tk-1 
             noeuds += gen_central_values(k, nx, ny, rk, dr, dtheta)
+            #calcul du membre de droite cad res
+            theta_k = maille_theta[j, i]
+            res[k]=L(rk,theta_k)
+            
     solutions = np.linalg.solve(noeuds, res)
     return maille_r, maille_theta, solutions  
 
