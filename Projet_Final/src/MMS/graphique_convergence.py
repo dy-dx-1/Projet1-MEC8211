@@ -51,7 +51,7 @@ def erreur_L2(domaine, results_numerique, results_analytique):
     for i in range(len(domaine)):
         for j in range(len(domaine)):
             erreur += (results_numerique[i][j] - results_analytique[i][j]) ** 2
-    return (erreur/len(domaine)) ** 0.5
+    return (erreur/len(domaine)**2) ** 0.5
 
 def erreur_Linf(domaine, results_numerique, results_analytique):
     """
@@ -72,7 +72,7 @@ def erreur_Linf(domaine, results_numerique, results_analytique):
         Erreur Linf calculée.
 
     """
-    erreur = abs(results_numerique - results_analytique) # car results numérique est sous forme colonne et analytique sous forme ligne 
+    erreur = np.average(abs(results_numerique - results_analytique)) # car results numérique est sous forme colonne et analytique sous forme ligne 
     return np.amax(erreur)
 
 def graphique_convergence_erreurs(delta_vals:list, erreurs:list, type_delta:str):

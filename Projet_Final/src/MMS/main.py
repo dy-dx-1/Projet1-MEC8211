@@ -1,8 +1,9 @@
-import fonctions as f 
+
 import numpy as np 
 import matplotlib.pyplot as plt 
 
 from  graphique_convergence import  graphique_convergence_erreurs,erreur_L1,erreur_L2,erreur_Linf
+import fonctions_MMS as f 
 
 class Parametres():
     u_inf = 1 
@@ -84,6 +85,8 @@ def main():
         erreur_relative_array = lambda arr_theo, arr_mdf: (np.average(abs(arr_theo-arr_mdf+1e-10)/(arr_theo+1e-10)))*100 # on perturbe de 1e-10 pour éviter /0
         erreurs_psi.append(erreur_relative_array(psi_analytique_mesh, psi_mdf_mesh)) # erreur relative en %
         erreurs_vitesses.append(erreur_relative_array(vitesses_ref, vitesses_mdf)) 
+        print("psi_analytique_mesh",psi_analytique_mesh)
+        print("psi_mdf_mesh",psi_mdf_mesh)
         
         domaine = [i for i in range(prm.nx)]
         errL1.append(erreur_L1(domaine, psi_mdf_mesh, psi_analytique_mesh))
@@ -91,50 +94,50 @@ def main():
         errLinf.append(erreur_Linf(domaine, psi_mdf_mesh, psi_analytique_mesh))
         
     erreurs=[errL1,errL2,errLinf]
-    # # Faisons le graphique 
-    # fig, axs = plt.subplots(2,1) 
-    # ax1, ax2 = axs[0], axs[1]
+    # Faisons le graphique 
+    fig, axs = plt.subplots(2,1) 
+    ax1, ax2 = axs[0], axs[1]
     
-    # ax1.plot(noeuds_err, erreurs_psi, '.-g', label="Erreur sur $\psi$") 
-    # ax2.plot(noeuds_err, erreurs_vitesses, '.-b', label="Erreur sur la vitesse") 
+    ax1.plot(noeuds_err, erreurs_psi, '.-g', label="Erreur sur $\psi$") 
+    ax2.plot(noeuds_err, erreurs_vitesses, '.-b', label="Erreur sur la vitesse") 
 
-    # ax1.set_title(r"Erreur relative sur $\psi$ et les vitesses selon la taille du maillage")
-    # ax1.set_ylabel(r"Erreur relative par rapport à la solution analytique[%]")
-    # ax1.grid(True) 
-    # ax1.legend() 
+    ax1.set_title(r"Erreur relative sur $\psi$ et les vitesses selon la taille du maillage")
+    ax1.set_ylabel(r"Erreur relative par rapport à la solution analytique[%]")
+    ax1.grid(True) 
+    ax1.legend() 
 
-    # ax2.set_xlabel(r"Nombre de noeuds sur le bord $nx=ny$")
-    # ax2.set_ylabel(r"Erreur relative par rapport à la solution analytique[%]")
-    # ax2.grid(True) 
-    # ax2.legend()    
-    # plt.show() 
+    ax2.set_xlabel(r"Nombre de noeuds sur le bord $nx=ny$")
+    ax2.set_ylabel(r"Erreur relative par rapport à la solution analytique[%]")
+    ax2.grid(True) 
+    ax2.legend()    
+    plt.show() 
     
-    # # Maintenant faisons un graphique log log pour vérifier l'ordre de convergence 
-    # fig, axs = plt.subplots(2,1) 
-    # ax1, ax2 = axs[0], axs[1]
-    # ax1.plot(noeuds_err, erreurs_psi, '.-g', label="Erreur sur $\psi$") 
-    # ax2.plot(noeuds_err, erreurs_vitesses, '.-b', label="Erreur sur la vitesse") 
+    # Maintenant faisons un graphique log log pour vérifier l'ordre de convergence 
+    fig, axs = plt.subplots(2,1) 
+    ax1, ax2 = axs[0], axs[1]
+    ax1.plot(noeuds_err, erreurs_psi, '.-g', label="Erreur sur $\psi$") 
+    ax2.plot(noeuds_err, erreurs_vitesses, '.-b', label="Erreur sur la vitesse") 
 
-    # ax1.set_title(r"Erreur relative sur $\psi$ et les vitesses selon la taille du maillage")
-    # ax1.set_ylabel(r"Erreur relative par rapport à la solution analytique[%]")
-    # ax1.grid(True) 
-    # ax1.legend() 
+    ax1.set_title(r"Erreur relative sur $\psi$ et les vitesses selon la taille du maillage")
+    ax1.set_ylabel(r"Erreur relative par rapport à la solution analytique[%]")
+    ax1.grid(True) 
+    ax1.legend() 
 
-    # ax2.set_xlabel(r"Nombre de noeuds sur le bord $nx=ny$")
-    # ax2.set_ylabel(r"Erreur relative par rapport à la solution analytique[%]")
-    # ax2.grid(True) 
-    # ax2.legend()    
+    ax2.set_xlabel(r"Nombre de noeuds sur le bord $nx=ny$")
+    ax2.set_ylabel(r"Erreur relative par rapport à la solution analytique[%]")
+    ax2.grid(True) 
+    ax2.legend()    
 
-    # ax1.set_yscale("log") 
-    # ax1.set_xscale("log")
-    # ax2.set_yscale("log")
-    # ax2.set_xscale("log")
-    # noeuds_log = np.log(noeuds_err) 
-    # erreurs_psi_log = np.log(erreurs_psi)
-    # erreurs_vitesses_log = np.log(erreurs_vitesses)  
-    # print(f"Pente du graphique log log (ordre de l'erreur): {np.polyfit(noeuds_log, erreurs_psi_log, 1)[0]:.0f}")
-    # print(f"Pente du graphique log log (ordre de l'erreur): {np.polyfit(noeuds_log, erreurs_vitesses_log, 1)[0]:.0f}")
-    # plt.show() 
+    ax1.set_yscale("log") 
+    ax1.set_xscale("log")
+    ax2.set_yscale("log")
+    ax2.set_xscale("log")
+    noeuds_log = np.log(noeuds_err) 
+    erreurs_psi_log = np.log(erreurs_psi)
+    erreurs_vitesses_log = np.log(erreurs_vitesses)  
+    print(f"Pente du graphique log log (ordre de l'erreur): {np.polyfit(noeuds_log, erreurs_psi_log, 1)[0]:.0f}")
+    print(f"Pente du graphique log log (ordre de l'erreur): {np.polyfit(noeuds_log, erreurs_vitesses_log, 1)[0]:.0f}")
+    plt.show() 
     
     #Graphiques de l'erreur
     
