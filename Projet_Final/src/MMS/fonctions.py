@@ -200,15 +200,12 @@ def mdf(params:object)->'tuple[np.ndarray, np.ndarray, np.ndarray]':
     R_ext=params.R_ext
     U_infty=params.u_inf
     res = np.zeros(N)
-    L= lambda r, theta: (- (2 * np.pi / R_ext)**2 * np.cos(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (1 - R**2 / r**2)
-                      - 2 * np.pi / R_ext * np.sin(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (R**2 / r**3)
-                      - 2 * (2 * np.pi / R_ext)**2 * np.sin(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (R**2 / r**3)
-                      - 6 * np.cos(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (R**2 / r**4)
-                      + 1 / r
-                      - 2 * np.pi / R_ext * np.sin(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (1 - R**2 / r**2)
-                      + 2 * np.cos(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (R**2 / r**3)
-                      + 1 / r**2
-                      - np.cos(2 * np.pi * r / R_ext) * np.sin(theta) * U_infty * R_ext * (1 - R**2 / r**2))
+    L= lambda r, theta: (-6*R**2*params.R_ext*params.u_inf*np.sin(theta)*np.cos(2*np.pi*r/params.R_ext)/r**4 
+                        - 8*np.pi*R**2*params.u_inf*np.sin(theta)*np.sin(2*np.pi*r/params.R_ext)/r**3 
+                        - params.R_ext*params.u_inf*(-R**2/r**2 + 1)*np.sin(theta)*np.cos(2*np.pi*r/params.R_ext)/r**2 
+                        + (2*R**2*params.R_ext*params.u_inf*np.sin(theta)*np.cos(2*np.pi*r/params.R_ext)/r**3 
+                        - 2*np.pi*params.u_inf*(-R**2/r**2 + 1)*np.sin(theta)*np.sin(2*np.pi*r/params.R_ext))/r 
+                        - 4*np.pi**2*params.u_inf*(-R**2/r**2 + 1)*np.sin(theta)*np.cos(2*np.pi*r/params.R_ext)/params.R_ext)
     
     # Itérons sur chacun des k afin de remplir la matrice des noeuds et du résidu 
     for k in range(N): 
