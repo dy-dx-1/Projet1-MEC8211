@@ -75,7 +75,7 @@ def erreur_Linf(domaine, results_numerique, results_analytique):
     erreur = np.average(abs(results_numerique - results_analytique)) # car results numérique est sous forme colonne et analytique sous forme ligne 
     return np.amax(erreur)
 
-def graphique_convergence_erreurs(delta_vals:list, erreurs:list, type_delta:str):
+def graphique_convergence_erreurs(delta_vals:list, erreurs:list, type_res:str):
     """
     Affiche un graphique de l'évolution de l'erreur en fonction de dt ou de dr.
 
@@ -85,13 +85,13 @@ def graphique_convergence_erreurs(delta_vals:list, erreurs:list, type_delta:str)
         Liste des valeurs de dt ou dr.
     erreurs : list of lists
         Liste des erreurs L1, L2, et Linf.
-    type_delta : 'dt' ou 'dr' 
+    type_res : psi ou la vitesse 
 
     Returns
     -------
     None
     """
-    print(f"***Ordre de convergence {'SPATIAL' if type_delta=='dr' else 'TEMPOREL'} observé***")
+    print("*****Ordre de convergence observé*****")
     for i, erreur in enumerate(erreurs): 
         j = 'inf' if i==2 else str(i+1) 
         coeffs = np.polyfit(np.log(delta_vals[-3:]), np.log(erreur[-3:]), 1)
@@ -109,16 +109,11 @@ def graphique_convergence_erreurs(delta_vals:list, erreurs:list, type_delta:str)
         plt.grid(True)
         plt.yscale('log')
         plt.xscale('log')
-        if type_delta=="dr":
-            plt.ylabel('Erreur ')
-            plt.xlabel('dr [m]')
-            plt.title(f"Convergence de l'erreur L{j} selon le pas spatial")
-        elif type_delta=="dt":
-            plt.ylabel('Erreur ')
-            plt.xlabel('dt [s]')
-            plt.title(f"Convergence de l'erreur L{j} selon le pas de temps")
-        else:
-            print("type delta in graphique_convergence_erreurs not valid")
-            return 
-        plt.savefig(f'Convergence_de_l-erreur_L{j}.png')
+        
+        plt.ylabel('Erreur ')
+        plt.xlabel('dr [m]')
+        titre=f"Convergence de l'erreur L{j} pour "
+        plt.title(titre+type_res)
+        figu=f'Convergence_de_l-erreur_L{j}_'
+        plt.savefig(figu+type_res+'.png')
         plt.show() 
