@@ -410,6 +410,7 @@ def compute_coefficients(mesh_vr:np.ndarray, mesh_vtheta:np.ndarray, params:obje
     print(f"Coefficient de portance = {cp_}")
     print(f"Coefficient de trainée = {cd_}")
     print(f"Coefficient de portance = {cl_}", "--------------------", sep="\n")
+    return cp_,cd_,cl_
 
 if __name__ == "__main__": 
     """ 

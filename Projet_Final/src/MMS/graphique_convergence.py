@@ -111,7 +111,7 @@ def graphique_convergence_erreurs(delta_vals:list, erreurs:list, type_res:str):
         plt.xscale('log')
         
         plt.ylabel('Erreur ')
-        plt.xlabel('dr [m]')
+        plt.xlabel("1/sqrt(N)")
         titre=f"Convergence de l'erreur L{j} pour "
         plt.title(titre+type_res)
         figu=f'Convergence_de_l-erreur_L{j}_'

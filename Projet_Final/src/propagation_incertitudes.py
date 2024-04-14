@@ -15,7 +15,7 @@ def monte_carlo_uniform(n):
 
 # Paramètres de la distribution log-normale
 moyenne = 0  # La moyenne en échelle log
-ecart_type = 0.5  # L'écart type en échelle log
+ecart_type = 0.25  # L'écart type en échelle log
 min_rayon = 0.00001
 max_rayon = 5
 
@@ -31,15 +31,15 @@ x = np.linspace(min_rayon, max_rayon, 100)
 y = (1 / (x * ecart_type * np.sqrt(2 * np.pi))) * np.exp(-(np.log(x) - moyenne)**2 / (2 * ecart_type**2))
 plt.plot(x, y, color='r', linewidth=2)
 
-plt.xlabel('Rayon (cm)')
+plt.xlabel('U_inf (m/s)')
 plt.ylabel('Densité de probabilité')
-plt.title('Distribution log-normale d\'un rayon')
+plt.title('Distribution log-normale de U_inf')
 plt.grid(True)
 plt.savefig("Histograme")
 plt.show()
 
 
-p_mont=monte_carlo_uniform(100)
+p_mont=monte_carlo_uniform(25)
 
 # Transformer les échantillons uniformes en échantillons log-normaux
 echantillons = stats.lognorm.ppf(p_mont, ecart_type, np.exp(moyenne))
