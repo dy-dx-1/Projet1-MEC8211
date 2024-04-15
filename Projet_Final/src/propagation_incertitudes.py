@@ -39,7 +39,7 @@ plt.savefig("Histograme")
 plt.show()
 
 
-p_mont=monte_carlo_uniform(25)
+p_mont=monte_carlo_uniform(100)
 
 # Transformer les échantillons uniformes en échantillons log-normaux
 echantillons = stats.lognorm.ppf(p_mont, ecart_type, np.exp(moyenne))

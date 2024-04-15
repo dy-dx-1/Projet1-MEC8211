@@ -1,6 +1,7 @@
 import fonctions as f 
 import numpy as np 
 import matplotlib.pyplot as plt 
+from scipy.interpolate import interp1d
 
 from  MMS.graphique_convergence import  graphique_convergence_erreurs,erreur_L1,erreur_L2,erreur_Linf
 
@@ -181,8 +182,155 @@ def propagation():
     
     printres(Resultats_Cd,"Cd")
     printres(Resultats_Cl,"Cl")
+   
+def prediction():
+    
+    def calculate_GCI(p_g, frh, fh):
+        p = min(max(0.5, p_g), 4)  # Assure que p est dans l'intervalle [0.5, 4.0]
+        return (3 / (2**p - 1)) * abs(frh - fh)
+
+    prm = Parametres()
+    
+    errL1=[]
+    errL2=[]
+    errLinf=[]
+    nb_noeuds=30
+    nb_fin_noeuds=85
+    u_infs=[0.1*i for i in range(5,35,5)]
+    
+    Resultats_Cd,Resultats_Cl=[],[]
+    Resultats_fin_Cd,Resultats_fin_Cl=[],[]
+    
+    GCI_cd,GCI_cl=[],[]
+    
+    for u_inf in u_infs: 
+        prm.u_inf=u_inf
+        print("Calculating for u_inf = ", u_inf)
+        prm.nx = nb_noeuds
+        prm.ny = nb_noeuds
+
+        # on recalcule les caractéristiques de la situation avec la mdf 
+        r_mesh, theta_mesh, vecteur_psis = f.mdf(params=prm)
+        psi_mdf_mesh = f.arrange_mesh(vecteur_psis, prm.nx, prm.ny) # valeurs de psi calculées par mdf sur maillage 
+        vr, vtheta = f.vitesses(vecteur_psis, prm) 
+        vr_mesh, vtheta_mesh = f.arrange_mesh(vr, prm.nx, prm.ny), f.arrange_mesh(vtheta, prm.nx, prm.ny) 
+        
+        # Output des coefficients de pression, portance et trainée 
+        cp,cd,cl=f.compute_coefficients(vr_mesh, vtheta_mesh, prm)
+        Resultats_Cd.append(cd)
+        Resultats_Cl.append(cl)
+        
+        
+        
+        
+        fiter_noeud=[43,45,50]
+
+        cd_ana,cl_ana,cd_mesh,cl_mesh=[],[],[],[]
+        for noeud_intermed in fiter_noeud:
+            prm.nx = noeud_intermed
+            prm.ny = noeud_intermed
+            # on recalcule les caractéristiques de la situation avec la mdf 
+            r_mesh, theta_mesh, vecteur_psis = f.mdf(params=prm)
+            psi_mdf_mesh = f.arrange_mesh(vecteur_psis, prm.nx, prm.ny) # valeurs de psi calculées par mdf sur maillage 
+            vr, vtheta = f.vitesses(vecteur_psis, prm) 
+            vr_mesh, vtheta_mesh = f.arrange_mesh(vr, prm.nx, prm.ny), f.arrange_mesh(vtheta, prm.nx, prm.ny) 
+            vr_mesh_ref, vtheta_mesh_ref = f.vr_ref_mesh(prm), f.vtheta_ref_mesh(prm) # valeurs de vitesse analytique sur maillage 
+
+            
+            cp,Cd_mesh,Cl_mesh=f.compute_coefficients(vr_mesh, vtheta_mesh, prm)
+            cp,Cd_ana,Cl_ana=f.compute_coefficients(vr_mesh_ref, vtheta_mesh_ref, prm)
+            
+            cd_ana.append(Cd_ana)
+            cl_ana.append(Cl_ana)
+            cd_mesh.append(Cd_mesh)
+            cl_mesh.append(Cl_mesh)
+            
+        def f_err(tab1,tab2):
+                res=[]
+                for i in range(len(tab1)):
+                    res.append((abs((tab1[i]-tab2[i]))))
+                return res     
+        errCD=f_err(cd_ana,cd_mesh)
+        errCL=f_err(cl_ana,cl_mesh)
+
+        coeffCd = np.polyfit(np.log(fiter_noeud), np.log(errCD), 1)
+        ordreCd = coeffCd[0] 
+        coeffCl = np.polyfit(np.log(fiter_noeud), np.log(errCL), 1)
+        ordreCl = coeffCd[0] 
+        
+        ###Calcul maillage fin
+        
+        prm.nx = nb_fin_noeuds
+        prm.ny = nb_fin_noeuds
+
+        # on recalcule les caractéristiques de la situation avec la mdf 
+        r_mesh, theta_mesh, vecteur_psis = f.mdf(params=prm)
+        psi_mdf_mesh = f.arrange_mesh(vecteur_psis, prm.nx, prm.ny) # valeurs de psi calculées par mdf sur maillage 
+        vr, vtheta = f.vitesses(vecteur_psis, prm) 
+        vr_mesh, vtheta_mesh = f.arrange_mesh(vr, prm.nx, prm.ny), f.arrange_mesh(vtheta, prm.nx, prm.ny) 
+        
+        # Output des coefficients de pression, portance et trainée 
+        cp,cd,cl=f.compute_coefficients(vr_mesh, vtheta_mesh, prm)
+        Resultats_fin_Cd.append(cd)
+        Resultats_fin_Cl.append(cl)
+        
+        GCI_cd.append(calculate_GCI(ordreCd, cd, cd_mesh[1]))
+        GCI_cl.append(calculate_GCI(ordreCl, cl, cl_mesh[1]))
+            
+    
+    E_Cd = [abs(Resultats_fin_Cd-Resultats_Cd[i]) for i in range(len(u_infs))]
+    E_Cl = [abs(Resultats_fin_Cl-Resultats_Cl[i]) for i in range(len(u_infs))]
+    
+
+    # Définition des valeurs et de leurs incertitudes pour chaque cas
+    
+    #Unum1=5.2e-5
+    #Unum2=1.3e-4
+    
+
+    incertitudes_Cd = [2*GCI_cd[i] for i in range(len(u_infs))]
+    incertitudes_Cl = [2*GCI_cl[i] for i in range(len(u_infs))]
+    couleurs_Cd = ['blue' for i in range(len(u_infs))]
+    couleurs_Cl = ['red' for i in range(len(u_infs))]
+    
+    plt.figure(1)
+    # Création du graphique pour chaque cas
+    for i in range(len(u_infs)):
+        plt.errorbar(i + 1, E_Cd[i], yerr=incertitudes_Cd[i], fmt='o', capsize=5, color=couleurs_Cd[i], markersize=8)
+    # Ajout d'une ligne en pointillés à zéro
+    #plt.axhline(y=0, color='black', linestyle='--')
+
+    # Ajout des étiquettes pour chaque cas au niveau de l'axe des abscisses
+    plt.xticks([i for i in range(len(u_infs))], ["u_inf = "+str(u_infs[i]) for i in range(len(u_infs))])
+
+    # Ajout du titre et des labels d'axes
+    plt.title('Graphique avec incertitudes')
+    plt.xlabel('Situations')
+    plt.ylabel('Δ(deltamodele)')
+    plt.savefig('graphique_Cd_prédiction.png')
+    # Affichage du graphique
+    plt.show()
+    
+    plt.figure(2)
+    # Création du graphique pour chaque cas
+    for i in range(len(u_infs)):
+        plt.errorbar(i + 1, E_Cl[i], yerr=incertitudes_Cl[i], fmt='o', capsize=5, color=couleurs_Cl[i], markersize=8)
+    # Ajout d'une ligne en pointillés à zéro
+    #plt.axhline(y=0, color='black', linestyle='--')
+
+    # Ajout des étiquettes pour chaque cas au niveau de l'axe des abscisses
+    plt.xticks([i for i in range(len(u_infs))], ["u_inf = "+str(u_infs[i]) for i in range(len(u_infs))])
+
+    # Ajout du titre et des labels d'axes
+    plt.title('Graphique avec incertitudes')
+    plt.xlabel('Situations')
+    plt.ylabel('Δ(deltamodele)')
+    plt.savefig('graphique_Cd_prédiction.png')
+    # Affichage du graphique
+    plt.show()
     
 if __name__=="__main__": 
-    propagation()
+    #propagation()
     #main()
+    prediction()
     
