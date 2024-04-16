@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from scipy.interpolate import interp1d
 
-from  MMS.graphique_convergence import  graphique_convergence_erreurs,erreur_L1,erreur_L2,erreur_Linf
+from  graphique_convergence import  graphique_convergence_erreurs,erreur_L1,erreur_L2,erreur_Linf
 
 class Parametres():
     u_inf = 1 
@@ -55,3 +55,29 @@ coeffCl = np.polyfit(np.log(fiter_noeud), np.log(errCL), 1)
 ordreCl = coeffCd[0] 
 
 print(ordreCl,ordreCd)
+
+
+
+#Prediction Cd
+x=[i for i in range(len(u_infs))]
+y_up=[E_Cd+incertitudes_Cd/2 for j in range(len(E_Cd))]
+y_mid=E_Cd
+y_down=[E_Cd-incertitudes_Cd/2 for j in range(len(E_Cd))]
+
+
+f_up = interp1d(x, y_up, kind='linear')
+f_mid = interp1d(x, y_mid, kind='linear')
+f_down = interp1d(x, y_down, kind='linear')
+
+predi_CD=[f_mid(100),f_up(100)-f_down(100)]
+#Prediction Cl
+y_up=[E_Cl+incertitudes_Cl/2 for j in range(len(E_Cl))]
+y_mid=E_Cl
+y_down=[E_Cl-incertitudes_Cl/2 for j in range(len(E_Cl))]
+
+
+f_up = interp1d(x, y_up, kind='linear')
+f_mid = interp1d(x, y_mid, kind='linear')
+f_down = interp1d(x, y_down, kind='linear')
+
+predi_Cl=[f_mid(100),f_up(100)-f_down(100)]
