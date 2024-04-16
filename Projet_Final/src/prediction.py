@@ -19,14 +19,50 @@ class Parametres():
 def prediction():
     
     def calculate_GCI(p_g, frh, fh):
+        """
+        Fonction calculant le Grid Convergence Index (GCI) pour notre cas précis
+    
+        Parameters
+        ----------
+        p_g : float
+            Paramètre p utilisé dans le calcul de GCI.
+        frh : float
+            Fréquence relative haute.
+        fh : float
+            Fréquence haute.
+    
+        Returns
+        -------
+        gci : float
+        Grid Convergence Index (GCI)
+        """
         p = min(max(0.5, p_g), 4)  # Assure que p est dans l'intervalle [0.5, 4.0]
         return (3 / (2**p - 1)) * abs(frh - fh)
     
     def f_err(tab1,tab2):
-            res=[]
-            for i in range(len(tab1)):
-                res.append((abs((tab1[i]-tab2[i]))))
-            return res 
+        """
+        Fonction calculant l'erreur L1 entre deux tableaux.
+    
+        Parameters
+        ----------
+        tab1 : array_like
+            Resultat analytique ou numérique
+        tab2 : array_like
+            Resultas analytique ou numérique
+        Returns
+        -------
+        res : list
+            Liste contenant les valeurs absolues des différences entre les éléments correspondants des deux tableaux.
+    
+        Raises
+        ------
+        ValueError
+            Si les deux tableaux n'ont pas la même longueur.
+        """
+        res=[]
+        for i in range(len(tab1)):
+               res.append((abs((tab1[i]-tab2[i]))))
+        return res 
 
     prm = Parametres()
     

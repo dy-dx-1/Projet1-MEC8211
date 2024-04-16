@@ -115,6 +115,25 @@ def main():
     #graphique_convergence_erreurs(tab,erreursV,'vitesse')
     
     def f_err(tab1,tab2):
+        """
+        Fonction calculant l'erreur L1 entre deux tableaux.
+    
+        Parameters
+        ----------
+        tab1 : array_like
+            Resultat analytique ou numérique
+        tab2 : array_like
+            Resultas analytique ou numérique
+        Returns
+        -------
+        res : list
+            Liste contenant les valeurs absolues des différences entre les éléments correspondants des deux tableaux.
+    
+        Raises
+        ------
+        ValueError
+            Si les deux tableaux n'ont pas la même longueur.
+        """
         res=[]
         for i in range(len(tab1)):
             res.append((abs((tab1[i]-tab2[i]))))

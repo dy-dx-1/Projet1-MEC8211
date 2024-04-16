@@ -58,26 +58,26 @@ print(ordreCl,ordreCd)
 
 
 
-#Prediction Cd
-x=[i for i in range(len(u_infs))]
-y_up=[E_Cd+incertitudes_Cd/2 for j in range(len(E_Cd))]
-y_mid=E_Cd
-y_down=[E_Cd-incertitudes_Cd/2 for j in range(len(E_Cd))]
+# #Prediction Cd
+# x=[i for i in range(len(u_infs))]
+# y_up=[E_Cd+incertitudes_Cd/2 for j in range(len(E_Cd))]
+# y_mid=E_Cd
+# y_down=[E_Cd-incertitudes_Cd/2 for j in range(len(E_Cd))]
 
 
-f_up = interp1d(x, y_up, kind='linear')
-f_mid = interp1d(x, y_mid, kind='linear')
-f_down = interp1d(x, y_down, kind='linear')
+# f_up = interp1d(x, y_up, kind='linear')
+# f_mid = interp1d(x, y_mid, kind='linear')
+# f_down = interp1d(x, y_down, kind='linear')
 
-predi_CD=[f_mid(100),f_up(100)-f_down(100)]
-#Prediction Cl
-y_up=[E_Cl+incertitudes_Cl/2 for j in range(len(E_Cl))]
-y_mid=E_Cl
-y_down=[E_Cl-incertitudes_Cl/2 for j in range(len(E_Cl))]
+# predi_CD=[f_mid(100),f_up(100)-f_down(100)]
+# #Prediction Cl
+# y_up=[E_Cl+incertitudes_Cl/2 for j in range(len(E_Cl))]
+# y_mid=E_Cl
+# y_down=[E_Cl-incertitudes_Cl/2 for j in range(len(E_Cl))]
 
 
-f_up = interp1d(x, y_up, kind='linear')
-f_mid = interp1d(x, y_mid, kind='linear')
-f_down = interp1d(x, y_down, kind='linear')
+# f_up = interp1d(x, y_up, kind='linear')
+# f_mid = interp1d(x, y_mid, kind='linear')
+# f_down = interp1d(x, y_down, kind='linear')
 
-predi_Cl=[f_mid(100),f_up(100)-f_down(100)]
+# predi_Cl=[f_mid(100),f_up(100)-f_down(100)]
